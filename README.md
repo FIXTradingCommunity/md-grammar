@@ -2,7 +2,7 @@
 
 Parser and writer for markdown documents. 
 
-The markdown grammar follows [GitHub Flavored Markdown Spec](https://github.github.com/gfm/).
+The markdown grammar follows [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). 
 
 ## Supported markdown features
 
@@ -23,6 +23,12 @@ The following markdown features are currently unsupported.
 * Setext headings
 * HTML blocks
 * Link reference definitions
+
+## Prerequisites
+This project requires Java 11 or later. It should run on any platform for which a JVM is supported. Several open-source implementations are available, including OpenJDK.
+
+## Build
+The project is built with Maven version 3.0 or later.
 
 ## License
 © Copyright 2020-2021 FIX Protocol Limited
