@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
  * Not thread-safe.
  *
  * @author Don Mendelson
- *
- * @param <T> value type
  */
 public class AssociativeSet {
 
