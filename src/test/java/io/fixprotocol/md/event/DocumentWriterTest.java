@@ -14,10 +14,14 @@
  */
 package io.fixprotocol.md.event;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.fixprotocol.md.util.AssociativeSet;
@@ -28,6 +32,11 @@ class DocumentWriterTest {
   private DocumentWriter documentWriter;
   private Writer writer;
 
+  @BeforeAll
+  public static void setupOnce() {
+    new File("target/test").mkdirs();
+  }
+  
   @BeforeEach
   void setUp() throws Exception {
     factory = new ContextFactory();
@@ -73,7 +82,9 @@ class DocumentWriterTest {
     detailProperties.addProperty("Presence", "required");
     documentWriter.write(table);
     String output = writer.toString();
-    System.out.print(output);
+    try (PrintStream out = new PrintStream(new FileOutputStream("target/test/table.txt"))) {
+      out.print(output);
+    }
   }
   
   @Test
@@ -93,6 +104,9 @@ class DocumentWriterTest {
     headings.add("abbrname", "XMLName");
     documentWriter.write(table, headings);
     String output = writer.toString();
-    System.out.print(output);
+    try (PrintStream out = new PrintStream(new FileOutputStream("target/test/tableWithHeadings.txt"))) {
+      out.print(output);
+    }
   }
+
 }
