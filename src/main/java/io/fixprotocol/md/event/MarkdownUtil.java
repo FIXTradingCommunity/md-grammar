@@ -16,6 +16,7 @@ package io.fixprotocol.md.event;
 
 public final class MarkdownUtil {
 
+  public static final char ESCAPE_CHARACTER = '\\';
   public static final String MARKDOWN_MEDIA_TYPE = "text/markdown";
 
   /**
@@ -33,17 +34,35 @@ public final class MarkdownUtil {
   public static String plainTextToMarkdown(String text) {
     final StringBuilder sb = new StringBuilder(text.length());
     final String stripped = text.strip();
+    boolean escaped = false;
     for (int i = 0; i < stripped.length(); i++) {
       final char c = stripped.charAt(i);
       switch (c) {
         case '|':
-          sb.append('\\');
+          if (!escaped) {
+            sb.append(ESCAPE_CHARACTER);
+            escaped = false;
+          }
           sb.append(c);
           break;
         case '\n':
           sb.append(' ');
           break;
+        case ESCAPE_CHARACTER:
+          if (escaped) {
+            sb.append(ESCAPE_CHARACTER);
+            sb.append(ESCAPE_CHARACTER);
+            escaped = false;
+          } else {
+            escaped = true;
+          }
+          break;
         default:
+          if (escaped) {
+            sb.append(ESCAPE_CHARACTER);
+            sb.append(ESCAPE_CHARACTER);
+            escaped = false;
+          }
           sb.append(c);
       }
 
