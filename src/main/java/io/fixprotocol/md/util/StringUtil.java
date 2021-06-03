@@ -17,6 +17,9 @@ package io.fixprotocol.md.util;
 public final class StringUtil {
 
   public static String convertToTitleCase(String key) {
+    if (key == null || key.isEmpty()) {
+      return "";
+    }
     final StringBuilder sb = new StringBuilder();
     sb.append(Character.toUpperCase(key.charAt(0)));
     for (int i = 1; i < key.length(); i++) {
