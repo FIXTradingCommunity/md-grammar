@@ -78,7 +78,7 @@ public final class DocumentParser {
    * @return {@code true} if the document is fully parsed without errors
    * @throws IOException if the document cannot be read
    */
-  public boolean parse(InputStream inputStream, Consumer<? super Contextual> contextConsumer)
+  public boolean parse(InputStream inputStream, Consumer<? super GraphContext> contextConsumer)
       throws IOException {
     return parse(inputStream, contextConsumer, null);
   }
@@ -92,7 +92,7 @@ public final class DocumentParser {
    * @return {@code true} if the document is fully parsed without errors
    * @throws IOException if the document cannot be read
    */
-  public boolean parse(InputStream inputStream, Consumer<? super Contextual> contextConsumer, ParserErrorListener parserListener)
+  public boolean parse(InputStream inputStream, Consumer<? super GraphContext> contextConsumer, ParserErrorListener parserListener)
       throws IOException {
     final MarkdownLexer lexer = new MarkdownLexer(CharStreams.fromStream(inputStream));
     final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));

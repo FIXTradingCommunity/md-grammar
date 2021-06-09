@@ -20,7 +20,7 @@ package io.fixprotocol.md.event;
  * @author Don Mendelson
  *
  */
-public interface Documentation extends Contextual {
+public interface Documentation extends GraphContext, DocumentContext  {
 
   /**
    * Default documentation format

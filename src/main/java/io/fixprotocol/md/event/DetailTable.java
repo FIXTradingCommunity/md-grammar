@@ -22,8 +22,12 @@ import java.util.Collection;
  * @author Don Mendelson
  *
  */
-public interface DetailTable extends Contextual {
+public interface DetailTable extends GraphContext, DocumentContext  {
 
+  interface TableRow extends DetailProperties, DocumentContext {
+    
+  }
+  
   /**
    *
    * @return an array of TableColumn that describes this table
@@ -35,5 +39,5 @@ public interface DetailTable extends Contextual {
    *
    * @return a Stream of DetailProperties
    */
-  Collection<? extends DetailProperties> rows();
+  Collection<? extends TableRow> rows();
 }

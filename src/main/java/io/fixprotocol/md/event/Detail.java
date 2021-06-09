@@ -20,5 +20,5 @@ package io.fixprotocol.md.event;
  * @author Don Mendelson
  *
  */
-public interface Detail extends Contextual, DetailProperties {
+public interface Detail extends GraphContext, DetailProperties, DocumentContext  {
 }

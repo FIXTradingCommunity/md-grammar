@@ -14,7 +14,7 @@
  */
 package io.fixprotocol.md.event;
 
-public interface MutableDetailTable extends DetailTable, MutableContextual {
+public interface MutableDetailTable extends DetailTable, MutableGraphContext {
 
   /**
    * Adds a collection key-value pairs to an array

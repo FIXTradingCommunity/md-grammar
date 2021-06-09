@@ -14,7 +14,7 @@
  */
 package io.fixprotocol.md.event;
 
-public interface MutableDocumentation extends Documentation, MutableContextual {
+public interface MutableDocumentation extends Documentation, MutableGraphContext {
 
   MutableDocumentation documentation(String documentation);
 

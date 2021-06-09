@@ -25,10 +25,10 @@ public class ConsumerTest {
   @ParameterizedTest
   @ValueSource(strings = {"md2orchestra-proto.md"})
   void consume(String fileName) throws IOException {
-    Consumer<Contextual> contextConsumer = new Consumer<>() {
+    Consumer<GraphContext> contextConsumer = new Consumer<>() {
 
       @Override
-      public void accept(Contextual contextual) {
+      public void accept(GraphContext contextual) {
         Context parent = contextual.getParent();
         if (parent != null) {
           final String[] parentKeys = parent.getKeys();

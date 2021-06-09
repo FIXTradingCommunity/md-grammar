@@ -22,12 +22,14 @@ import java.util.Map.Entry;
 import io.fixprotocol.md.event.Context;
 import io.fixprotocol.md.event.MarkdownUtil;
 import io.fixprotocol.md.event.MutableDetail;
+import io.fixprotocol.md.event.MutableDocumentContext;
 
-public class DetailImpl implements MutableDetail {
+public class DetailImpl implements MutableDetail, MutableDocumentContext {
 
-  private final Map<String, String> properties = new LinkedHashMap<>();
+  private int charPositionInLine = UNKNOWN_POSITION;
+  private int line = UNKNOWN_POSITION;
   private Context parent;
-
+  private final Map<String, String> properties = new LinkedHashMap<>();
 
   @Override
   public void addIntProperty(String key, int value) {
@@ -39,6 +41,9 @@ public class DetailImpl implements MutableDetail {
     properties.put(key.toLowerCase(), value);
   }
 
+  public int getCharPositionInLine() {
+    return charPositionInLine;
+  }
 
   @Override
   public Integer getIntProperty(String key) {
@@ -53,10 +58,15 @@ public class DetailImpl implements MutableDetail {
       return null;
   }
 
+  public int getLine() {
+    return line;
+  }
+
   @Override
   public Context getParent() {
     return parent;
   }
+
 
   @Override
   public Collection<Entry<String, String>> getProperties() {
@@ -66,6 +76,14 @@ public class DetailImpl implements MutableDetail {
   @Override
   public String getProperty(String key) {
     return MarkdownUtil.stripCell(properties.get(key.toLowerCase()));
+  }
+
+  public void setCharPositionInLine(int charPositionInLine) {
+    this.charPositionInLine = charPositionInLine;
+  }
+
+  public void setLine(int line) {
+    this.line = line;
   }
 
   @Override

@@ -2,12 +2,12 @@ package io.fixprotocol.md.event;
 
 
 /**
- * Something that has a Context
+ * An object that has context in a graph
  *
  * @author Don Mendelson
  *
  */
-public interface Contextual {
+public interface GraphContext {
 
   /**
    * Returns the Context to which an object belongs, or a broader Context

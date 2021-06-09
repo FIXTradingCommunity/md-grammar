@@ -14,7 +14,7 @@
  */
 package io.fixprotocol.md.event;
 
-public interface MutableDetail extends Detail, MutableContextual {
+public interface MutableDetail extends Detail, MutableGraphContext {
 
   void addIntProperty(String key, int value);
 

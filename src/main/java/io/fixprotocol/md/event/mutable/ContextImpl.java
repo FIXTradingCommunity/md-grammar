@@ -19,11 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 import io.fixprotocol.md.event.Context;
 import io.fixprotocol.md.event.MutableContext;
+import io.fixprotocol.md.event.MutableDocumentContext;
 
-public class ContextImpl implements MutableContext {
+public class ContextImpl implements MutableContext, MutableDocumentContext {
 
+  private int charPositionInLine = UNKNOWN_POSITION;
   private final List<String> keys = new ArrayList<>();
   private final int level;
+  private int line = UNKNOWN_POSITION;
   private Context parent = null;
 
   public ContextImpl() {
@@ -46,6 +49,10 @@ public class ContextImpl implements MutableContext {
   @Override
   public void addKey(String key) {
     keys.add(key);
+  }
+
+  public int getCharPositionInLine() {
+    return charPositionInLine;
   }
 
   /**
@@ -91,9 +98,23 @@ public class ContextImpl implements MutableContext {
     return level;
   }
 
+  public int getLine() {
+    return line;
+  }
+
   @Override
   public Context getParent() {
     return parent;
+  }
+
+  @Override
+  public void setCharPositionInLine(int charPositionInLine) {
+    this.charPositionInLine = charPositionInLine;
+  }
+
+  @Override
+  public void setLine(int line) {
+    this.line=line;
   }
 
   @Override

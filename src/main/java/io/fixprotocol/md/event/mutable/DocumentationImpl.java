@@ -15,13 +15,16 @@
 package io.fixprotocol.md.event.mutable;
 
 import io.fixprotocol.md.event.Context;
+import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.MutableDocumentation;
 
-public class DocumentationImpl implements MutableDocumentation {
+public class DocumentationImpl implements MutableDocumentation, MutableDocumentContext {
 
+  private int charPositionInLine = UNKNOWN_POSITION;
   private final String documentation;
-  private Context parent;
   private final String format;
+  private int line = UNKNOWN_POSITION;
+  private Context parent;
 
   /**
    * Create markdown documentation, that is ordinary paragraphs
@@ -52,6 +55,10 @@ public class DocumentationImpl implements MutableDocumentation {
     return this;
   }
 
+  public int getCharPositionInLine() {
+    return charPositionInLine;
+  }
+
   @Override
   public String getDocumentation() {
     return documentation;
@@ -62,9 +69,21 @@ public class DocumentationImpl implements MutableDocumentation {
     return format;
   }
 
+  public int getLine() {
+    return line;
+  }
+
   @Override
   public Context getParent() {
     return parent;
+  }
+
+  public void setCharPositionInLine(int charPositionInLine) {
+    this.charPositionInLine = charPositionInLine;
+  }
+
+  public void setLine(int line) {
+    this.line = line;
   }
 
   @Override

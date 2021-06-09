@@ -17,7 +17,7 @@ package io.fixprotocol.md.event;
 /**
  * A semantic context for subsequent contents
  */
-public interface Context extends Contextual {
+public interface Context extends GraphContext, DocumentContext {
 
   int DEFAULT_LEVEL = 1;
   String[] EMPTY_CONTEXT = new String[0];

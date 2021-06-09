@@ -14,7 +14,7 @@
  */
 package io.fixprotocol.md.event;
 
-public interface MutableContext extends Context, MutableContextual {
+public interface MutableContext extends Context, MutableGraphContext {
 
   /**
    * Add a key to the Context

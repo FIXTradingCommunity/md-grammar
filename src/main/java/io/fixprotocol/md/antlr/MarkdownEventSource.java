@@ -40,10 +40,11 @@ import io.fixprotocol.md.antlr.MarkdownParser.TableContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TabledelimiterrowContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TableheadingContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TablerowContext;
-import io.fixprotocol.md.event.Contextual;
+import io.fixprotocol.md.event.GraphContext;
 import io.fixprotocol.md.event.MutableContext;
-import io.fixprotocol.md.event.MutableContextual;
 import io.fixprotocol.md.event.MutableDetailProperties;
+import io.fixprotocol.md.event.MutableDocumentContext;
+import io.fixprotocol.md.event.MutableGraphContext;
 import io.fixprotocol.md.event.mutable.ContextImpl;
 import io.fixprotocol.md.event.mutable.DetailImpl;
 import io.fixprotocol.md.event.mutable.DetailTableImpl;
@@ -83,7 +84,7 @@ public class MarkdownEventSource implements MarkdownListener {
     return text.substring(beginIndex, endIndex);
   }
 
-  private final Consumer<? super Contextual> contextConsumer;
+  private final Consumer<? super GraphContext> contextConsumer;
   private final Deque<MutableContext> contexts = new ArrayDeque<>();
   private boolean inTableHeading = false;
   private final List<String> lastBlocks = new ArrayList<>();
@@ -92,7 +93,7 @@ public class MarkdownEventSource implements MarkdownListener {
   private final List<String> lastTableHeadings = new ArrayList<>();
   private final Logger logger = LogManager.getLogger(getClass());
 
-  public MarkdownEventSource(Consumer<? super Contextual> contextConsumer) {
+  public MarkdownEventSource(Consumer<? super GraphContext> contextConsumer) {
     this.contextConsumer = contextConsumer;
   }
 
@@ -245,6 +246,8 @@ public class MarkdownEventSource implements MarkdownListener {
     final int headingLevel = headingLine.indexOf(" ");
     final String[] headingWords = headingLine.substring(headingLevel + 1).split(WHITESPACE_REGEX);
     final ContextImpl context = new ContextImpl(headingWords, headingLevel);
+    context.setLine(ctx.start.getLine());
+    context.setCharPositionInLine(ctx.start.getCharPositionInLine());
     updateParentContext(context);
 
     contextConsumer.accept(context);
@@ -290,15 +293,22 @@ public class MarkdownEventSource implements MarkdownListener {
   public void exitTable(TableContext ctx) {
     if (!inTableHeading) {
       final DetailTableImpl detailTable = new DetailTableImpl();
+      detailTable.setLine(ctx.start.getLine());
+      detailTable.setCharPositionInLine(ctx.start.getCharPositionInLine());
       final List<TablerowContext> tablerows = ctx.tablerow();
 
       for (final TablerowContext tablerow : tablerows) {
-        final MutableDetailProperties detail = detailTable.newRow();
+        final MutableDetailProperties row = detailTable.newRow();
+        if (row instanceof MutableDocumentContext) {
+          MutableDocumentContext mutableRow = (MutableDocumentContext)row;
+          mutableRow.setLine(tablerow.start.getLine());
+          mutableRow.setCharPositionInLine(tablerow.start.getCharPositionInLine());
+        }
 
         for (int i = 0; i < tablerow.cell().size() && i < lastTableHeadings.size(); i++) {
           final CellContext cell = tablerow.cell(i);
           if (cell != null) {
-            detail.addProperty(lastTableHeadings.get(i), cell.getText());
+            row.addProperty(lastTableHeadings.get(i), cell.getText());
           } else {
             logger.error("MarkdownEventSource table cell missing in column {}", i);
           }
@@ -326,6 +336,8 @@ public class MarkdownEventSource implements MarkdownListener {
   public void exitTablerow(TablerowContext ctx) {
     if (!inTableHeading) {
       final DetailImpl detail = new DetailImpl();
+      detail.setLine(ctx.start.getLine());
+      detail.setCharPositionInLine(ctx.start.getCharPositionInLine());
       for (int i = 0; i < lastColumnNo && i < lastTableHeadings.size(); i++) {
         final String value = lastRowValues.get(i);
         if (!value.isBlank()) {
@@ -365,7 +377,7 @@ public class MarkdownEventSource implements MarkdownListener {
     }
   }
 
-  void updateParentContext(final MutableContextual contextual) {
+  void updateParentContext(final MutableGraphContext contextual) {
     final MutableContext lastContext = contexts.peekLast();
     contextual.setParent(lastContext);
   }

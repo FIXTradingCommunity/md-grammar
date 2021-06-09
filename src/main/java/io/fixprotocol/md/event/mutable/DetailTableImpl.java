@@ -27,14 +27,16 @@ import io.fixprotocol.md.event.DetailProperties;
 import io.fixprotocol.md.event.MarkdownUtil;
 import io.fixprotocol.md.event.MutableDetailProperties;
 import io.fixprotocol.md.event.MutableDetailTable;
+import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.MutableTableColumn;
 
-public class DetailTableImpl implements MutableDetailTable {
+public class DetailTableImpl implements MutableDetailTable, MutableDocumentContext {
 
-  private static class DetailPropertiesImpl implements MutableDetailProperties {
-
+  private class TableRowImpl implements MutableDetailProperties, TableRow, MutableDocumentContext {
+    private int charPositionInLine;
+    private int line;
     private final Map<String, String> properties = new LinkedHashMap<>();
-
+    
     @Override
     public void addIntProperty(String key, int value) {
       addProperty(key, Integer.toString(value));
@@ -52,6 +54,12 @@ public class DetailTableImpl implements MutableDetailTable {
     }
 
     @Override
+    public int getCharPositionInLine() {
+      // if row position unknown, get position of enclosing table
+      return charPositionInLine != UNKNOWN_POSITION ? charPositionInLine : DetailTableImpl.this.getCharPositionInLine();
+    }
+
+    @Override
     public Integer getIntProperty(String key) {
       final String property = getProperty(key);
       if (property != null) {
@@ -65,6 +73,14 @@ public class DetailTableImpl implements MutableDetailTable {
     }
 
     @Override
+    public int getLine() {
+      // if row position unknown, get position of enclosing table
+      return line != UNKNOWN_POSITION ? line : DetailTableImpl.this.getLine();
+    }
+
+
+
+    @Override
     public Collection<Entry<String, String>> getProperties() {
       return Collections.unmodifiableSet(properties.entrySet());
     }
@@ -74,20 +90,51 @@ public class DetailTableImpl implements MutableDetailTable {
       return properties.get(Objects.requireNonNull(key, "Missing property key").toLowerCase());
     }
 
+    public void setCharPositionInLine(int charPositionInLine) {
+      this.charPositionInLine = charPositionInLine;
+    }
+    
+    public void setLine(int line) {
+      this.line = line;
+    }
+
     @Override
     public String toString() {
-      return "DetailPropertiesImpl [properties=" + properties + "]";
+      return "TableRowImpl [properties=" + properties + "]";
     }
   }
 
-  private final List<DetailProperties> propertiesList = new ArrayList<>();
+  private int charPositionInLine;
+  private int line;
   private Context parent;
+  private final List<TableRow> propertiesList = new ArrayList<>();
 
+  
+  private TableRow clone(DetailProperties detailProperties) {
+    if (detailProperties instanceof TableRow) {
+      return (TableRow) detailProperties;
+    } else {
+      TableRowImpl row = new TableRowImpl();
+      detailProperties.getProperties().forEach(e -> row.properties.put(e.getKey(), e.getValue()));
+      return row;
+    }    
+  }
 
   @Override
   public DetailProperties addProperties(DetailProperties detailProperties) {
-    propertiesList.add(detailProperties);
+    final TableRow clone = clone(detailProperties);
+    propertiesList.add(clone);
     return detailProperties;
+  }
+
+  @Override
+  public int getCharPositionInLine() {
+    return charPositionInLine;
+  }
+
+  @Override
+  public int getLine() {
+    return line;
   }
 
   @Override
@@ -116,16 +163,24 @@ public class DetailTableImpl implements MutableDetailTable {
   }
 
   @Override
-  public MutableDetailProperties newRow() {
-    final DetailPropertiesImpl detailProperties = new DetailPropertiesImpl();
-    addProperties(detailProperties);
-    return detailProperties;
+  public TableRowImpl newRow() {
+    final TableRowImpl row = new TableRowImpl();
+    propertiesList.add(row);
+    return row;
   }
 
   @Override
-  public Collection<? extends DetailProperties> rows() {
+  public Collection<TableRow> rows() {
     return Collections.unmodifiableList(propertiesList);
 
+  }
+
+  public void setCharPositionInLine(int charPositionInLine) {
+    this.charPositionInLine = charPositionInLine;
+  }
+
+  public void setLine(int line) {
+    this.line = line;
   }
 
   @Override
