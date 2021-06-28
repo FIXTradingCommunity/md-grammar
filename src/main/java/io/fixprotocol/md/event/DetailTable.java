@@ -14,7 +14,7 @@
  */
 package io.fixprotocol.md.event;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * A Context with a table of values
@@ -30,14 +30,14 @@ public interface DetailTable extends GraphContext, DocumentContext  {
   
   /**
    *
-   * @return an array of TableColumn that describes this table
+   * @return an List of TableColumn that describes this table
    */
-  TableColumn[] getTableColumns();
+  List<? extends TableColumn> getTableColumns();
 
   /**
-   * Supplies a Collection of row values
+   * Supplies a Iterable of row values
    *
-   * @return a Stream of DetailProperties
+   * @return a Iterable of TableRow
    */
-  Collection<? extends TableRow> rows();
+  Iterable<? extends TableRow> rows();
 }

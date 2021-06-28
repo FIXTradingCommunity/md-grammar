@@ -17,6 +17,10 @@ package io.fixprotocol.md.event;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,12 +64,12 @@ public class DocumentWriter implements AutoCloseable {
   }
 
   public void write(DetailTable detailTable) throws IOException {
-    final TableColumn[] tableColumns = detailTable.getTableColumns();
+    final List<? extends TableColumn> tableColumns = detailTable.getTableColumns();
     write(detailTable, tableColumns);
   }
 
-  public void write(DetailTable detailTable, AssociativeSet headings) throws IOException {
-    final MutableTableColumn[] tableColumns = (MutableTableColumn[]) detailTable.getTableColumns();
+  public void write(MutableDetailTable detailTable, AssociativeSet headings) throws IOException {
+    final List<? extends MutableTableColumn> tableColumns = detailTable.getTableColumns();
     for (final MutableTableColumn column : tableColumns) {
       final String key = column.getKey();
       if (key != null) {
@@ -78,7 +82,18 @@ public class DocumentWriter implements AutoCloseable {
     write(detailTable, tableColumns);
   }
 
-  public void write(DetailTable detailTable, final TableColumn[] tableColumns) throws IOException {
+  public void write(DetailTable detailTable, final List<? extends TableColumn> tableColumns) throws IOException {
+    // Align spacing to longest value in each column
+    Map<String, TableColumn> columnsByKey = new HashMap<>();
+    tableColumns.forEach(tc -> columnsByKey.put(tc.getKey(), tc));
+    for (final DetailProperties row : detailTable.rows()) {
+      for (Entry<String, String> p : row.getProperties()) {
+         TableColumn tc = columnsByKey.get(p.getKey());
+         if (tc != null) {
+           tc.updateWidth(p.getValue().length());
+         }
+      }
+    }
     writeTableHeadings(tableColumns);
     writeTableDelimiters(tableColumns);
     for (final DetailProperties row : detailTable.rows()) {
@@ -132,7 +147,7 @@ public class DocumentWriter implements AutoCloseable {
     writer.write(SPACES, 0, spaces);
   }
 
-  private void writeTableDelimiters(TableColumn[] tableColumns) throws IOException {
+  private void writeTableDelimiters(List<? extends TableColumn> tableColumns) throws IOException {
     for (final TableColumn column : tableColumns) {
       writer.write("|");
       final int hyphens = Math.min(column.getWidth() + 2, HYPHENS.length - 1);
@@ -141,7 +156,7 @@ public class DocumentWriter implements AutoCloseable {
     writer.write("|\n");
   }
 
-  private void writeTableHeadings(TableColumn[] tableColumns) throws IOException {
+  private void writeTableHeadings(List<? extends TableColumn> tableColumns) throws IOException {
     for (final TableColumn column : tableColumns) {
       writer.write(CELL_PREFIX);
       writer.write(column.getHeading());
@@ -152,7 +167,7 @@ public class DocumentWriter implements AutoCloseable {
     writer.write("|\n");
   }
 
-  private void writeTableRow(TableColumn[] tableColumns, DetailProperties row) throws IOException {
+  private void writeTableRow(List<? extends TableColumn> tableColumns, DetailProperties row) throws IOException {
     for (final TableColumn column : tableColumns) {
       final String key = column.getKey();
       String value = row.getProperty(key);

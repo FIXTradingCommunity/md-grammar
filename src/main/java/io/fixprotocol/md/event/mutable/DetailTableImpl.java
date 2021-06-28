@@ -29,6 +29,7 @@ import io.fixprotocol.md.event.MutableDetailProperties;
 import io.fixprotocol.md.event.MutableDetailTable;
 import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.MutableTableColumn;
+import io.fixprotocol.md.util.ListUtil;
 
 public class DetailTableImpl implements MutableDetailTable, MutableDocumentContext {
 
@@ -143,23 +144,21 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
   }
 
   @Override
-  public MutableTableColumn[] getTableColumns() {
-    final Map<String, TableColumnImpl> columns = new LinkedHashMap<>();
+  public List<? extends MutableTableColumn> getTableColumns() {
+    List<MutableTableColumn> columns = new ArrayList<>();
 
-    rows().forEach(r -> r.getProperties().forEach(p -> {
-      final String key = p.getKey();
-      final TableColumnImpl column = columns.get(key);
-      if (column == null) {
-        columns.put(key, new TableColumnImpl(key, Math.max(key.length(), p.getValue().length())));
-      } else {
-        column.updateLength(p.getValue().length());
-      }
-    }));
+    for (TableRow r : rows()) {
+      final List<MutableTableColumn> rowColumns = new ArrayList<>();
+      r.getProperties().forEach(p -> {
+        final String key = p.getKey();
+        final TableColumnImpl column =
+            new TableColumnImpl(key, Math.max(key.length(), p.getValue().length()));
+        rowColumns.add(column);
+      });
+      columns = ListUtil.merge(columns, rowColumns);
+    }
 
-    final Collection<TableColumnImpl> values = columns.values();
-    final MutableTableColumn[] array = new MutableTableColumn[values.size()];
-    values.toArray(array);
-    return array;
+    return columns;
   }
 
   @Override
@@ -170,8 +169,8 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
   }
 
   @Override
-  public Collection<TableRow> rows() {
-    return Collections.unmodifiableList(propertiesList);
+  public Iterable<TableRow> rows() {
+    return propertiesList;
 
   }
 

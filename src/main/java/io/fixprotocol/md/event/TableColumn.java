@@ -15,6 +15,14 @@
 package io.fixprotocol.md.event;
 
 
+/**
+ * Attributes of a table column
+ * 
+ * Immutable except width is mutable.
+ * 
+ * @author Don Mendelson
+ *
+ */
 public interface TableColumn {
 
   enum Alignment {
@@ -43,5 +51,13 @@ public interface TableColumn {
    * @return the column width
    */
   int getWidth();
+  
+
+  /**
+   * Update width allowed for column
+   * @param newWidth minimum space to allow for column
+   * @return actual space allocated so far
+   */
+  int updateWidth(int newWidth);
 
 }

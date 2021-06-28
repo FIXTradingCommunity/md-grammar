@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fixprotocol</groupId>
 	<artifactId>md-grammar</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Markdown parser</description>
 	<url>https://github.com/FIXTradingCommunity/md-grammar</url>

@@ -38,6 +38,23 @@ class TableColumnImpl implements MutableTableColumn {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    TableColumnImpl other = (TableColumnImpl) obj;
+    if (key == null) {
+      if (other.key != null)
+        return false;
+    } else if (!key.equals(other.key))
+      return false;
+    return true;
+  }
+
+  @Override
   public Alignment getAlignment() {
     return alignment;
   }
@@ -61,13 +78,21 @@ class TableColumnImpl implements MutableTableColumn {
   }
 
   @Override
-  public void setHeading(String display) {
-    this.display = display;
-    updateLength(display.length());
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((key == null) ? 0 : key.hashCode());
+    return result;
   }
 
   @Override
-  public int updateLength(int newLength) {
+  public void setHeading(String display) {
+    this.display = display;
+    updateWidth(display.length());
+  }
+
+  @Override
+  public int updateWidth(int newLength) {
     this.length = Math.max(length, newLength);
     return length;
   }

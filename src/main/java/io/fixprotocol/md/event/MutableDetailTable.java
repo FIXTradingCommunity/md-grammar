@@ -14,6 +14,8 @@
  */
 package io.fixprotocol.md.event;
 
+import java.util.List;
+
 public interface MutableDetailTable extends DetailTable, MutableGraphContext {
 
   /**
@@ -25,15 +27,12 @@ public interface MutableDetailTable extends DetailTable, MutableGraphContext {
   DetailProperties addProperties(DetailProperties detailProperties);
 
   /**
-   * @return an array of MutableTableColumn to adjust column properties including headings
-   */
-  @Override
-  MutableTableColumn[] getTableColumns();
-
-  /**
    * Creates a new row and adds it to this table
    *
    * @return a new row instance
    */
   MutableDetailProperties newRow();
+  
+  List<? extends MutableTableColumn> getTableColumns();
+
 }
