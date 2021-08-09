@@ -19,10 +19,10 @@ import io.fixprotocol.md.util.StringUtil;
 
 class TableColumnImpl implements MutableTableColumn {
   private final Alignment alignment;
+
   private String display = null;
   private final String key;
   private int length;
-
   public TableColumnImpl(String key) {
     this(key, 0, Alignment.LEFT);
   }
@@ -47,11 +47,8 @@ class TableColumnImpl implements MutableTableColumn {
       return false;
     TableColumnImpl other = (TableColumnImpl) obj;
     if (key == null) {
-      if (other.key != null)
-        return false;
-    } else if (!key.equals(other.key))
-      return false;
-    return true;
+      return other.key == null;
+    } else return key.equals(other.key);
   }
 
   @Override
@@ -89,6 +86,12 @@ class TableColumnImpl implements MutableTableColumn {
   public void setHeading(String display) {
     this.display = display;
     updateWidth(display.length());
+  }
+
+  @Override
+  public String toString() {
+    return "TableColumnImpl [key=" + key + ", display=" + display + ", length=" + length
+        + ", alignment=" + alignment + "]";
   }
 
   @Override

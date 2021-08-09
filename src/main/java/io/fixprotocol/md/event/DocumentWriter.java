@@ -144,14 +144,20 @@ public class DocumentWriter implements AutoCloseable {
     writer.write(CELL_PREFIX);
     writer.write(value);
     final int spaces = Math.min(length - value.length() + 1, SPACES.length - 1);
-    writer.write(SPACES, 0, spaces);
+    //assert spaces >= 0;
+    if (spaces > 0) {
+      writer.write(SPACES, 0, spaces);
+    }
   }
 
   private void writeTableDelimiters(List<? extends TableColumn> tableColumns) throws IOException {
     for (final TableColumn column : tableColumns) {
       writer.write("|");
       final int hyphens = Math.min(column.getWidth() + 2, HYPHENS.length - 1);
-      writer.write(HYPHENS, 0, hyphens);
+      //assert hyphens >= 0;
+      if (hyphens > 0) {
+        writer.write(HYPHENS, 0, hyphens);
+      }
     }
     writer.write("|\n");
   }
@@ -162,7 +168,10 @@ public class DocumentWriter implements AutoCloseable {
       writer.write(column.getHeading());
       final int spaces =
           Math.min(column.getWidth() - column.getHeading().length() + 1, SPACES.length - 1);
-      writer.write(SPACES, 0, spaces);
+      //assert spaces >= 0;
+      if (spaces > 0) {
+        writer.write(SPACES, 0, spaces);
+      }
     }
     writer.write("|\n");
   }
