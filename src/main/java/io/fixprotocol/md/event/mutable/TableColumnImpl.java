@@ -18,17 +18,18 @@ import io.fixprotocol.md.event.MutableTableColumn;
 import io.fixprotocol.md.util.StringUtil;
 
 class TableColumnImpl implements MutableTableColumn {
-  private final Alignment alignment;
-
+  private Alignment alignment = null;
+  private Class<?> datatype = null;
   private String display = null;
   private final String key;
   private int length;
+  
   public TableColumnImpl(String key) {
-    this(key, 0, Alignment.LEFT);
+    this(key, 0, null);
   }
 
   public TableColumnImpl(String key, int length) {
-    this(key, length, Alignment.LEFT);
+    this(key, length, null);
   }
 
   public TableColumnImpl(String key, int length, Alignment alignment) {
@@ -51,9 +52,27 @@ class TableColumnImpl implements MutableTableColumn {
     } else return key.equals(other.key);
   }
 
+  /**
+   * If Alignment is explicitly set, return that value. Otherwise, infer it based
+   * on datatype.
+   */
   @Override
   public Alignment getAlignment() {
-    return alignment;
+    if (alignment != null) {
+      return alignment;
+    } else if (datatype != null) {
+      if (Number.class.isAssignableFrom(datatype)) {
+        return Alignment.RIGHT;
+      } else if (Boolean.class.isAssignableFrom(datatype)
+          || Character.class.isAssignableFrom(datatype)) {
+        return Alignment.CENTER;
+      }
+    }
+    return Alignment.LEFT;
+  }
+
+  public Class<?> getDatatype() {
+    return datatype;
   }
 
   @Override
@@ -82,11 +101,20 @@ class TableColumnImpl implements MutableTableColumn {
     return result;
   }
 
+  /**
+   * Set the datatype of a column for display characteristics
+   * 
+   * @param datatype class of the data in this column
+   */
+  public void setDatatype(Class<?> datatype) {
+    this.datatype = datatype;
+  }
+
   @Override
   public void setHeading(String display) {
     this.display = display;
     updateWidth(display.length());
-  }
+  } 
 
   @Override
   public String toString() {
