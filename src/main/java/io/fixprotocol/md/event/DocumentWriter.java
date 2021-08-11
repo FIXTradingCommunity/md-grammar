@@ -16,6 +16,7 @@ package io.fixprotocol.md.event;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,11 +40,20 @@ public class DocumentWriter implements AutoCloseable {
 
   private final Logger logger = LogManager.getLogger(getClass());
   private final Writer writer;
+  private final DatatypeInference datatypes;
 
   public DocumentWriter(Writer writer) {
     this.writer = writer;
     Arrays.fill(SPACES, ' ');
     Arrays.fill(HYPHENS, '-');
+    datatypes = new DatatypeInference();
+  }
+  
+  public DocumentWriter(Writer writer, NumberFormat numberFormat, String trueValue, String falseValue) {
+    this.writer = writer;
+    Arrays.fill(SPACES, ' ');
+    Arrays.fill(HYPHENS, '-');
+    datatypes = new DatatypeInference(numberFormat, trueValue, falseValue);
   }
 
   @Override
@@ -68,9 +78,9 @@ public class DocumentWriter implements AutoCloseable {
     write(detailTable, tableColumns);
   }
 
-  public void write(MutableDetailTable detailTable, AssociativeSet headings) throws IOException {
-    final List<? extends MutableTableColumn> tableColumns = detailTable.getTableColumns();
-    for (final MutableTableColumn column : tableColumns) {
+  public void write(DetailTable detailTable, AssociativeSet headings) throws IOException {
+    final List<? extends TableColumn> tableColumns = detailTable.getTableColumns();
+    for (final TableColumn column : tableColumns) {
       final String key = column.getKey();
       if (key != null) {
         final String display = headings.get(key);
@@ -83,14 +93,17 @@ public class DocumentWriter implements AutoCloseable {
   }
 
   public void write(DetailTable detailTable, final List<? extends TableColumn> tableColumns) throws IOException {
-    // Align spacing to longest value in each column
     Map<String, TableColumn> columnsByKey = new HashMap<>();
     tableColumns.forEach(tc -> columnsByKey.put(tc.getKey(), tc));
     for (final DetailProperties row : detailTable.rows()) {
       for (Entry<String, String> p : row.getProperties()) {
          TableColumn tc = columnsByKey.get(p.getKey());
          if (tc != null) {
+           // Set spacing to longest value in each column
            tc.updateWidth(p.getValue().length());
+           // Infer common datatype
+           final Class<?> datatype = datatypes.inferDatatype(p.getValue());
+           tc.updateDatatype(datatype);
          }
       }
     }
@@ -152,11 +165,22 @@ public class DocumentWriter implements AutoCloseable {
 
   private void writeTableDelimiters(List<? extends TableColumn> tableColumns) throws IOException {
     for (final TableColumn column : tableColumns) {
+      TableColumn.Alignment alignment = column.getAlignment();
       writer.write("|");
-      final int hyphens = Math.min(column.getWidth() + 2, HYPHENS.length - 1);
-      //assert hyphens >= 0;
+      if (alignment == TableColumn.Alignment.CENTER) {
+        writer.write(':');
+      }
+      int hyphens = Math.min(column.getWidth() + 2, HYPHENS.length - 1);
+      if (alignment == TableColumn.Alignment.CENTER) {
+        hyphens -= 2;
+      } if (alignment == TableColumn.Alignment.RIGHT) {
+        hyphens--;
+      }
       if (hyphens > 0) {
         writer.write(HYPHENS, 0, hyphens);
+      }
+      if (alignment != TableColumn.Alignment.LEFT) {
+        writer.write(':');
       }
     }
     writer.write("|\n");

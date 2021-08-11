@@ -82,7 +82,7 @@ class DocumentWriterTest {
     detailProperties.addProperty("Presence", "required");
     documentWriter.write(table);
     String output = writer.toString();
-    try (PrintStream out = new PrintStream(new FileOutputStream("target/test/table.txt"))) {
+    try (PrintStream out = new PrintStream(new FileOutputStream("target/test/table.md"))) {
       out.print(output);
     }
   }
@@ -104,7 +104,7 @@ class DocumentWriterTest {
     headings.add("abbrname", "XMLName");
     documentWriter.write(table, headings);
     String output = writer.toString();
-    try (PrintStream out = new PrintStream(new FileOutputStream("target/test/tableWithHeadings.txt"))) {
+    try (PrintStream out = new PrintStream(new FileOutputStream("target/test/tableWithHeadings.md"))) {
       out.print(output);
     }
   }

@@ -33,6 +33,6 @@ public interface MutableDetailTable extends DetailTable, MutableGraphContext {
    */
   MutableDetailProperties newRow();
   
-  List<? extends MutableTableColumn> getTableColumns();
+  List<? extends TableColumn> getTableColumns();
 
 }

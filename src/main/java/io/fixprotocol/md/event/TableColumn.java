@@ -16,9 +16,10 @@ package io.fixprotocol.md.event;
 
 
 /**
- * Attributes of a table column
+ * Mutable attributes of a table column
  * 
- * Immutable except width is mutable.
+ * Attributes are mutable because a function that composes a table needs to be adjust spacing, etc.
+ * for best presentation.
  * 
  * @author Don Mendelson
  *
@@ -26,9 +27,13 @@ package io.fixprotocol.md.event;
 public interface TableColumn {
 
   enum Alignment {
-    LEFT, CENTER, RIGHT
+    CENTER, LEFT, RIGHT
   }
 
+  /**
+   * 
+   * @return column alignment
+   */
   Alignment getAlignment();
 
   /**
@@ -51,12 +56,27 @@ public interface TableColumn {
    * @return the column width
    */
   int getWidth();
-  
+
+  /**
+   * Set the heading to display, may be different than key
+   * 
+   * @param display text to display
+   */
+  void setHeading(String display);
+
+  /**
+   * Update the inferred datatype of this column
+   * 
+   * @param datatype a datatype to control formatting of data in the column
+   */
+  void updateDatatype(Class<?> datatype);
+
 
   /**
    * Update width allowed for column
-   * @param newWidth minimum space to allow for column
-   * @return actual space allocated so far
+   * 
+   * @param newWidth minimum space requested for this column
+   * @return actual space allocated so far, may be larger than {@code newWidth}
    */
   int updateWidth(int newWidth);
 

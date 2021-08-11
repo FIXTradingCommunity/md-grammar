@@ -14,10 +14,10 @@
  */
 package io.fixprotocol.md.event.mutable;
 
-import io.fixprotocol.md.event.MutableTableColumn;
+import io.fixprotocol.md.event.TableColumn;
 import io.fixprotocol.md.util.StringUtil;
 
-class TableColumnImpl implements MutableTableColumn {
+class TableColumnImpl implements TableColumn {
   private Alignment alignment = null;
   private Class<?> datatype = null;
   private String display = null;
@@ -126,6 +126,21 @@ class TableColumnImpl implements MutableTableColumn {
   public int updateWidth(int newLength) {
     this.length = Math.max(length, newLength);
     return length;
+  }
+
+  /**
+   * Compares datatype to existing datatype. If datatypes are mixed, then default to String.
+   */
+  @Override
+  public void updateDatatype(Class<?> datatype) {
+    if (this.datatype == String.class) {
+      // don't override default
+    } else if(datatype != null && this.datatype != null && datatype != this.datatype) {
+      // set default if mixed
+      this.datatype = String.class;
+    } else {
+      this.datatype = datatype;
+    }
   }
 
 }

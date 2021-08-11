@@ -1,10 +1,10 @@
-package io.fixprotocol.md.event.mutable;
+package io.fixprotocol.md.event;
 
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.function.Predicate;
 
-class Datatypes {
+class DatatypeInference {
 
   static final String DEFAULT_FALSE = "N";
   static final String DEFAULT_TRUE = "Y";
@@ -33,7 +33,7 @@ class Datatypes {
   /**
    * Constructor with default formats of current Locale
    */
-  public Datatypes() {
+  public DatatypeInference() {
     this(NumberFormat.getInstance(), DEFAULT_TRUE, DEFAULT_FALSE);
   }
 
@@ -43,7 +43,7 @@ class Datatypes {
    * @param trueValue String value of true Boolean
    * @param falseValue String value of false Boolean
    */
-  public Datatypes(NumberFormat numberFormat, String trueValue, String falseValue) {
+  public DatatypeInference(NumberFormat numberFormat, String trueValue, String falseValue) {
     this.falseValue = falseValue;
     this.numberFormat = numberFormat;
     this.trueValue = trueValue;
@@ -54,8 +54,8 @@ class Datatypes {
    * @param str String to parse
    * @return Inferred datatype Class, defaults to {@code String.class}
    */
-  public Class<?> getDatatype(String str) {
-    String s = str.strip();
+  public Class<?> inferDatatype(String str) {
+    final String s = str.strip();
     if (isNumber.test(s)) {
       return Number.class;
     }

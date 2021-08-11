@@ -28,7 +28,7 @@ import io.fixprotocol.md.event.MarkdownUtil;
 import io.fixprotocol.md.event.MutableDetailProperties;
 import io.fixprotocol.md.event.MutableDetailTable;
 import io.fixprotocol.md.event.MutableDocumentContext;
-import io.fixprotocol.md.event.MutableTableColumn;
+import io.fixprotocol.md.event.TableColumn;
 import io.fixprotocol.md.util.ListUtil;
 
 public class DetailTableImpl implements MutableDetailTable, MutableDocumentContext {
@@ -144,11 +144,11 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
   }
 
   @Override
-  public List<? extends MutableTableColumn> getTableColumns() {
-    List<MutableTableColumn> columns = new ArrayList<>();
+  public List<? extends TableColumn> getTableColumns() {
+    List<TableColumn> columns = new ArrayList<>();
 
     for (TableRow r : rows()) {
-      final List<MutableTableColumn> rowColumns = new ArrayList<>();
+      final List<TableColumn> rowColumns = new ArrayList<>();
       r.getProperties().forEach(p -> {
         final String key = p.getKey();
         final TableColumnImpl column =
