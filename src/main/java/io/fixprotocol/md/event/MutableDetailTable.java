@@ -16,7 +16,7 @@ package io.fixprotocol.md.event;
 
 import java.util.List;
 
-public interface MutableDetailTable extends DetailTable, MutableGraphContext {
+public interface MutableDetailTable extends DetailTable, MutableDocumentContext, MutableGraphContext {
 
   /**
    * Adds a collection key-value pairs to an array

@@ -40,8 +40,9 @@ public class ConsumerTest {
           detail.getProperties().forEach(property -> System.out.format("Property key=%s value=%s%n",
               property.getKey(), property.getValue()));
         } else if (contextual instanceof Documentation) {
-          Documentation documentation = (Documentation) contextual;
-          System.out.format("Documentation %s%n", documentation.getDocumentation());
+          Documentation documentation = (Documentation) contextual;       
+          System.out.format("Documentation %s format %s%n", documentation.getDocumentation(), 
+              documentation.getFormat());
         } else if (contextual instanceof Context) {
           Context context = (Context) contextual;
           final String[] keys = context.getKeys();

@@ -28,7 +28,7 @@ public class ContextFactory {
     return new ContextImpl(keys, level);
   }
 
-  public MutableGraphContext createDetail() {
+  public MutableDetail createDetail() {
     return new DetailImpl();
   }
 

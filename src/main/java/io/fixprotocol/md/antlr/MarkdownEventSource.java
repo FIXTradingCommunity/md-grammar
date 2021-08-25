@@ -40,15 +40,15 @@ import io.fixprotocol.md.antlr.MarkdownParser.TableContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TabledelimiterrowContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TableheadingContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TablerowContext;
+import io.fixprotocol.md.event.ContextFactory;
 import io.fixprotocol.md.event.GraphContext;
 import io.fixprotocol.md.event.MutableContext;
+import io.fixprotocol.md.event.MutableDetail;
 import io.fixprotocol.md.event.MutableDetailProperties;
+import io.fixprotocol.md.event.MutableDetailTable;
 import io.fixprotocol.md.event.MutableDocumentContext;
+import io.fixprotocol.md.event.MutableDocumentation;
 import io.fixprotocol.md.event.MutableGraphContext;
-import io.fixprotocol.md.event.mutable.ContextImpl;
-import io.fixprotocol.md.event.mutable.DetailImpl;
-import io.fixprotocol.md.event.mutable.DetailTableImpl;
-import io.fixprotocol.md.event.mutable.DocumentationImpl;
 
 /**
  * Generates events for document consumers
@@ -60,6 +60,8 @@ public class MarkdownEventSource implements MarkdownListener {
 
   private static final String CELL_NONTEXT = " |\t";
   private static final String WHITESPACE_REGEX = "[ \t]";
+  
+  private ContextFactory contextFactory = new ContextFactory();
 
   static String normalizeList(List<? extends ListlineContext> textlines) {
     return textlines.stream().map(p -> p.LISTLINE().getText()).collect(Collectors.joining("\n"));
@@ -234,8 +236,13 @@ public class MarkdownEventSource implements MarkdownListener {
 
   @Override
   public void exitFencedcodeblock(FencedcodeblockContext ctx) {
-    // TODO Auto-generated method stub
-
+    List<ParagraphlineContext> lines = ctx.paragraphline();
+    String text = lines.stream().map(p -> p.PARAGRAPHLINE().getText())
+        .collect(Collectors.joining("\n"));
+    String infostring = ctx.infostring().getText();
+    final MutableDocumentation documentation = contextFactory.createDocumentation(text, infostring);
+    updateParentContext(documentation);
+    contextConsumer.accept(documentation);
   }
 
   @Override
@@ -245,7 +252,7 @@ public class MarkdownEventSource implements MarkdownListener {
     // Heading level is length of first word formed with '#'
     final int headingLevel = headingLine.indexOf(" ");
     final String[] headingWords = headingLine.substring(headingLevel + 1).split(WHITESPACE_REGEX);
-    final ContextImpl context = new ContextImpl(headingWords, headingLevel);
+    final MutableContext context = contextFactory.createContext(headingWords, headingLevel);
     context.setLine(ctx.start.getLine());
     context.setCharPositionInLine(ctx.start.getCharPositionInLine());
     updateParentContext(context);
@@ -292,7 +299,7 @@ public class MarkdownEventSource implements MarkdownListener {
   @Override
   public void exitTable(TableContext ctx) {
     if (!inTableHeading) {
-      final DetailTableImpl detailTable = new DetailTableImpl();
+      final MutableDetailTable detailTable = contextFactory.createDetailTable();
       detailTable.setLine(ctx.start.getLine());
       detailTable.setCharPositionInLine(ctx.start.getCharPositionInLine());
       final List<TablerowContext> tablerows = ctx.tablerow();
@@ -335,7 +342,7 @@ public class MarkdownEventSource implements MarkdownListener {
   @Override
   public void exitTablerow(TablerowContext ctx) {
     if (!inTableHeading) {
-      final DetailImpl detail = new DetailImpl();
+      final MutableDetail detail = contextFactory.createDetail();
       detail.setLine(ctx.start.getLine());
       detail.setCharPositionInLine(ctx.start.getCharPositionInLine());
       for (int i = 0; i < lastColumnNo && i < lastTableHeadings.size(); i++) {
@@ -389,7 +396,7 @@ public class MarkdownEventSource implements MarkdownListener {
   private void supplyLastDocumentation() {
     if (!lastBlocks.isEmpty()) {
       final String paragraphs = normalizeBlocks();
-      final DocumentationImpl documentation = new DocumentationImpl(paragraphs);
+      final MutableDocumentation documentation = contextFactory.createDocumentation(paragraphs);
       updateParentContext(documentation);
       contextConsumer.accept(documentation);
     }
