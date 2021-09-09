@@ -24,11 +24,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.antlr.v4.gui.TestRig;
-import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,27 +49,6 @@ class MdGrammarTest {
     new File("target/test").mkdirs();
   }
 
-  private static final class Validator extends BaseErrorListener {
-    private boolean isValid = true;
-    private final PrintStream out;
-
-    public Validator(PrintStream out) {
-      super();
-      this.out = out;
-    }
-
-    public boolean isValid() {
-      return isValid;
-    }
-
-    @Override
-    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
-        int charPositionInLine, String msg, RecognitionException e) {
-      isValid = false;
-      out.format("Failed to parse at line %d position %d due to %s", line, charPositionInLine, msg);
-    }
-  }
-
   @ParameterizedTest
   @ValueSource(strings = {"src/test/resources/badmarkdown.md"})
   void invalid(String fileName) throws IOException {
@@ -81,7 +57,7 @@ class MdGrammarTest {
       MarkdownLexer lexer =
           new MarkdownLexer(CharStreams.fromStream(new FileInputStream(fileName)));
       MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));
-      final Validator validator = new Validator(out);
+      final GrammarValidator validator = new GrammarValidator(out);
       parser.addErrorListener(validator);
       DocumentContext document = parser.document();
       assertFalse(validator.isValid);
@@ -106,7 +82,7 @@ class MdGrammarTest {
       MarkdownLexer lexer =
           new MarkdownLexer(CharStreams.fromStream(new FileInputStream(fileName)));
       MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));
-      final Validator validator = new Validator(out);
+      final GrammarValidator validator = new GrammarValidator(out);
       parser.addErrorListener(validator);
 
       DocumentContext document = parser.document();
