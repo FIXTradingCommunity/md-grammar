@@ -14,6 +14,7 @@
  */
 package io.fixprotocol.md.event;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Consumer;
@@ -23,7 +24,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class ConsumerTest {
 
   @ParameterizedTest
-  @ValueSource(strings = {"md2orchestra-proto.md"})
+  @ValueSource(strings = {"src/test/resources/md2orchestra-proto.md"})
   void consume(String fileName) throws IOException {
     Consumer<GraphContext> contextConsumer = new Consumer<>() {
 
@@ -53,7 +54,7 @@ public class ConsumerTest {
       }
     };
 
-    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+    InputStream inputStream = new FileInputStream(fileName);
     DocumentParser parser = new DocumentParser();
     parser.parse(inputStream, contextConsumer);
   }

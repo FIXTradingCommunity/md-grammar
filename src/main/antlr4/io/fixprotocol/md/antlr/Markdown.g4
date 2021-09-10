@@ -236,7 +236,7 @@ ESCAPEDPIPE
 fragment
 WS
 :
-	[  \t]
+	[ \t]
 ;
 
 fragment

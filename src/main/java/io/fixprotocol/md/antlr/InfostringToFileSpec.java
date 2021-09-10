@@ -41,6 +41,7 @@ public class InfostringToFileSpec {
 
   /**
    * Parses an infostring and populates a new FileSpec
+   * 
    * @param infostring string following the opening fence of a fenced code block
    * @return a new FileSpec, or {@code null} if parsing fails
    */
@@ -81,15 +82,15 @@ public class InfostringToFileSpec {
             spec.setStartSearch(startLocation.STRING().getText());
           }
         }
-      }
-      EndContext endCtx = importspec.end();
-      if (endCtx != null) {
-        LocationContext startLocation = endCtx.location();
-        if (startLocation.LINENUMBER() != null) {
-          spec.setEndLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
-        }
-        if (startLocation.STRING() != null) {
-          spec.setEndSearch(startLocation.STRING().getText());
+        EndContext endCtx = importspec.end();
+        if (endCtx != null) {
+          LocationContext startLocation = endCtx.location();
+          if (startLocation.LINENUMBER() != null) {
+            spec.setEndLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
+          }
+          if (startLocation.STRING() != null) {
+            spec.setEndSearch(startLocation.STRING().getText());
+          }
         }
       }
       return spec;

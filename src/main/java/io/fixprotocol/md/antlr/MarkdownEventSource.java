@@ -13,6 +13,9 @@
  */
 package io.fixprotocol.md.antlr;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -50,6 +53,7 @@ import io.fixprotocol.md.event.MutableDetailTable;
 import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.MutableDocumentation;
 import io.fixprotocol.md.event.MutableGraphContext;
+import io.fixprotocol.md.util.FileImport;
 import io.fixprotocol.md.util.FileSpec;
 
 /**
@@ -64,6 +68,7 @@ public class MarkdownEventSource implements MarkdownListener {
   private static final String WHITESPACE_REGEX = "[ \t]";
   
   private ContextFactory contextFactory = new ContextFactory();
+  private FileImport fileImport = new FileImport();
 
   static String normalizeList(List<? extends ListlineContext> textlines) {
     return textlines.stream().map(p -> p.LISTLINE().getText()).collect(Collectors.joining("\n"));
@@ -96,10 +101,30 @@ public class MarkdownEventSource implements MarkdownListener {
   private final List<String> lastRowValues = new ArrayList<>();
   private final List<String> lastTableHeadings = new ArrayList<>();
   private final Logger logger = LogManager.getLogger(getClass());
+  private final Path baseDir;
 
+  /**
+   * Constructor
+   * 
+   * Defaults to current directory for file imports.
+   * 
+   * @param contextConsumer target of events
+   */
   public MarkdownEventSource(Consumer<? super GraphContext> contextConsumer) {
-    this.contextConsumer = contextConsumer;
+    this(contextConsumer, Paths.get("").toAbsolutePath());
   }
+  
+  /**
+   * Constructor
+   * 
+   * @param contextConsumer target of events
+   * @param baseDir base directory for file imports (if any)
+   */
+  public MarkdownEventSource(Consumer<? super GraphContext> contextConsumer, Path baseDir) {
+    this.contextConsumer = contextConsumer;
+    this.baseDir = baseDir;
+  }
+
 
   @Override
   public void enterBlock(BlockContext ctx) {
@@ -236,10 +261,17 @@ public class MarkdownEventSource implements MarkdownListener {
 
   }
 
+  /**
+   * If an infostring specifies a file import, then attempt to import the file and use it for
+   * contents of the documentation. Otherwise, pass through the contents of the fenced code block.
+   * If file import succeeds, then ignore contents of the fenced code block. Therefore, a fenced
+   * code block may contain default text that will be used if an imported file is not available.
+   */
   @Override
   public void exitFencedcodeblock(FencedcodeblockContext ctx) {
     String format = Documentation.MARKDOWN;
     InfostringContext infostringCtx = ctx.infostring();
+    String text = "";
     if (infostringCtx != null) {
       String infostring = infostringCtx.PARAGRAPHLINE().getText();
       InfostringToFileSpec infostringToFileSpec = new InfostringToFileSpec();
@@ -251,7 +283,13 @@ public class MarkdownEventSource implements MarkdownListener {
           }
           String path = spec.getPath();
           if (path != null) {
-            
+            try {
+              text = fileImport.importTextFromFile(baseDir, spec);
+            } catch (IOException e) {
+              logger.error(
+                  "Failed to import file specified by infostring for fenced code block is invalid at line {} position {}",
+                  infostringCtx.start.getLine(), infostringCtx.start.getCharPositionInLine(), e);
+            }
           }
         }
       } else {
@@ -259,9 +297,10 @@ public class MarkdownEventSource implements MarkdownListener {
             infostringCtx.start.getLine(), infostringCtx.start.getCharPositionInLine());
       }
     }
-    List<ParagraphlineContext> lines = ctx.paragraphline();
-    String text =
-        lines.stream().map(p -> p.PARAGRAPHLINE().getText()).collect(Collectors.joining("\n"));
+    if (text.isEmpty()) {
+      List<ParagraphlineContext> lines = ctx.paragraphline();
+      text = lines.stream().map(p -> p.PARAGRAPHLINE().getText()).collect(Collectors.joining("\n"));
+    }
 
     final MutableDocumentation documentation = contextFactory.createDocumentation(text, format);
     updateParentContext(documentation);
