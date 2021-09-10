@@ -80,7 +80,7 @@ IGNORE_WS
 fragment
 WS
 :
-	[  \t]
+	[ \t]
 ;
 
 fragment

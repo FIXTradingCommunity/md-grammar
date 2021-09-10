@@ -41,6 +41,7 @@ import io.fixprotocol.md.antlr.MarkdownParser.TabledelimiterrowContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TableheadingContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TablerowContext;
 import io.fixprotocol.md.event.ContextFactory;
+import io.fixprotocol.md.event.Documentation;
 import io.fixprotocol.md.event.GraphContext;
 import io.fixprotocol.md.event.MutableContext;
 import io.fixprotocol.md.event.MutableDetail;
@@ -49,6 +50,7 @@ import io.fixprotocol.md.event.MutableDetailTable;
 import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.MutableDocumentation;
 import io.fixprotocol.md.event.MutableGraphContext;
+import io.fixprotocol.md.util.FileSpec;
 
 /**
  * Generates events for document consumers
@@ -236,11 +238,32 @@ public class MarkdownEventSource implements MarkdownListener {
 
   @Override
   public void exitFencedcodeblock(FencedcodeblockContext ctx) {
+    String format = Documentation.MARKDOWN;
+    InfostringContext infostringCtx = ctx.infostring();
+    if (infostringCtx != null) {
+      String infostring = infostringCtx.PARAGRAPHLINE().getText();
+      InfostringToFileSpec infostringToFileSpec = new InfostringToFileSpec();
+      FileSpec spec = infostringToFileSpec.parse(infostring);
+      if (spec != null) {
+        if (spec.isValid()) {
+          if (spec.getType() != null) {
+            format = spec.getType();
+          }
+          String path = spec.getPath();
+          if (path != null) {
+            
+          }
+        }
+      } else {
+        logger.error("Infostring for fenced code block is invalid at line {} position {}",
+            infostringCtx.start.getLine(), infostringCtx.start.getCharPositionInLine());
+      }
+    }
     List<ParagraphlineContext> lines = ctx.paragraphline();
-    String text = lines.stream().map(p -> p.PARAGRAPHLINE().getText())
-        .collect(Collectors.joining("\n"));
-    String infostring = ctx.infostring().getText();
-    final MutableDocumentation documentation = contextFactory.createDocumentation(text, infostring);
+    String text =
+        lines.stream().map(p -> p.PARAGRAPHLINE().getText()).collect(Collectors.joining("\n"));
+
+    final MutableDocumentation documentation = contextFactory.createDocumentation(text, format);
     updateParentContext(documentation);
     contextConsumer.accept(documentation);
   }

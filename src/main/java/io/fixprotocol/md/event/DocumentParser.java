@@ -86,7 +86,7 @@ public final class DocumentParser {
   /**
    * Parse a markdown document
    *
-   * @param inputStream input as markdown
+   * @param inputStream input as markdown. Text is assumed to encoded as UTF-8.
    * @param contextConsumer consumer of document events
    * @param parserListener listens for parser errors. May be {@code null}.
    * @return {@code true} if the document is fully parsed without errors
