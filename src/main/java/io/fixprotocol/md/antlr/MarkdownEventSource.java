@@ -20,6 +20,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -66,9 +67,6 @@ public class MarkdownEventSource implements MarkdownListener {
 
   private static final String CELL_NONTEXT = " |\t";
   private static final String WHITESPACE_REGEX = "[ \t]";
-  
-  private ContextFactory contextFactory = new ContextFactory();
-  private FileImport fileImport = new FileImport();
 
   static String normalizeList(List<? extends ListlineContext> textlines) {
     return textlines.stream().map(p -> p.LISTLINE().getText()).collect(Collectors.joining("\n"));
@@ -93,6 +91,10 @@ public class MarkdownEventSource implements MarkdownListener {
     return text.substring(beginIndex, endIndex);
   }
 
+  private final ContextFactory contextFactory = new ContextFactory();
+
+  private final FileImport fileImport = new FileImport();
+
   private final Consumer<? super GraphContext> contextConsumer;
   private final Deque<MutableContext> contexts = new ArrayDeque<>();
   private boolean inTableHeading = false;
@@ -105,26 +107,25 @@ public class MarkdownEventSource implements MarkdownListener {
 
   /**
    * Constructor
-   * 
+   *
    * Defaults to current directory for file imports.
-   * 
+   *
    * @param contextConsumer target of events
    */
   public MarkdownEventSource(Consumer<? super GraphContext> contextConsumer) {
-    this(contextConsumer, Paths.get("").toAbsolutePath());
+    this(contextConsumer, null);
   }
-  
+
   /**
    * Constructor
-   * 
+   *
    * @param contextConsumer target of events
    * @param baseDir base directory for file imports (if any)
    */
   public MarkdownEventSource(Consumer<? super GraphContext> contextConsumer, Path baseDir) {
     this.contextConsumer = contextConsumer;
-    this.baseDir = baseDir;
+    this.baseDir = Objects.requireNonNullElse(baseDir, Paths.get("").toAbsolutePath());
   }
-
 
   @Override
   public void enterBlock(BlockContext ctx) {
@@ -270,22 +271,22 @@ public class MarkdownEventSource implements MarkdownListener {
   @Override
   public void exitFencedcodeblock(FencedcodeblockContext ctx) {
     String format = Documentation.MARKDOWN;
-    InfostringContext infostringCtx = ctx.infostring();
+    final InfostringContext infostringCtx = ctx.infostring();
     String text = "";
     if (infostringCtx != null) {
-      String infostring = infostringCtx.PARAGRAPHLINE().getText();
-      InfostringToFileSpec infostringToFileSpec = new InfostringToFileSpec();
-      FileSpec spec = infostringToFileSpec.parse(infostring);
+      final String infostring = infostringCtx.PARAGRAPHLINE().getText();
+      final InfostringToFileSpec infostringToFileSpec = new InfostringToFileSpec();
+      final FileSpec spec = infostringToFileSpec.parse(infostring);
       if (spec != null) {
         if (spec.isValid()) {
           if (spec.getType() != null) {
             format = spec.getType();
           }
-          String path = spec.getPath();
+          final String path = spec.getPath();
           if (path != null) {
             try {
               text = fileImport.importTextFromFile(baseDir, spec);
-            } catch (IOException e) {
+            } catch (final IOException e) {
               logger.error(
                   "Failed to import file specified by infostring for fenced code block is invalid at line {} position {}",
                   infostringCtx.start.getLine(), infostringCtx.start.getCharPositionInLine(), e);
@@ -298,7 +299,7 @@ public class MarkdownEventSource implements MarkdownListener {
       }
     }
     if (text.isEmpty()) {
-      List<ParagraphlineContext> lines = ctx.paragraphline();
+      final List<ParagraphlineContext> lines = ctx.paragraphline();
       text = lines.stream().map(p -> p.PARAGRAPHLINE().getText()).collect(Collectors.joining("\n"));
     }
 
@@ -369,7 +370,7 @@ public class MarkdownEventSource implements MarkdownListener {
       for (final TablerowContext tablerow : tablerows) {
         final MutableDetailProperties row = detailTable.newRow();
         if (row instanceof MutableDocumentContext) {
-          MutableDocumentContext mutableRow = (MutableDocumentContext)row;
+          final MutableDocumentContext mutableRow = (MutableDocumentContext) row;
           mutableRow.setLine(tablerow.start.getLine());
           mutableRow.setCharPositionInLine(tablerow.start.getCharPositionInLine());
         }

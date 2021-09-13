@@ -23,7 +23,7 @@ class TableColumnImpl implements TableColumn {
   private String display = null;
   private final String key;
   private int length;
-  
+
   public TableColumnImpl(String key) {
     this(key, 0, null);
   }
@@ -42,19 +42,17 @@ class TableColumnImpl implements TableColumn {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (obj == null)
+    if ((obj == null) || (getClass() != obj.getClass()))
       return false;
-    if (getClass() != obj.getClass())
-      return false;
-    TableColumnImpl other = (TableColumnImpl) obj;
+    final TableColumnImpl other = (TableColumnImpl) obj;
     if (key == null) {
       return other.key == null;
-    } else return key.equals(other.key);
+    } else
+      return key.equals(other.key);
   }
 
   /**
-   * If Alignment is explicitly set, return that value. Otherwise, infer it based
-   * on datatype.
+   * If Alignment is explicitly set, return that value. Otherwise, infer it based on datatype.
    */
   @Override
   public Alignment getAlignment() {
@@ -103,7 +101,7 @@ class TableColumnImpl implements TableColumn {
 
   /**
    * Set the datatype of a column for display characteristics
-   * 
+   *
    * @param datatype class of the data in this column
    */
   public void setDatatype(Class<?> datatype) {
@@ -114,18 +112,12 @@ class TableColumnImpl implements TableColumn {
   public void setHeading(String display) {
     this.display = display;
     updateWidth(display.length());
-  } 
+  }
 
   @Override
   public String toString() {
     return "TableColumnImpl [key=" + key + ", display=" + display + ", length=" + length
         + ", alignment=" + alignment + "]";
-  }
-
-  @Override
-  public int updateWidth(int newLength) {
-    this.length = Math.max(length, newLength);
-    return length;
   }
 
   /**
@@ -135,12 +127,18 @@ class TableColumnImpl implements TableColumn {
   public void updateDatatype(Class<?> datatype) {
     if (this.datatype == String.class) {
       // don't override default
-    } else if(datatype != null && this.datatype != null && datatype != this.datatype) {
+    } else if (datatype != null && this.datatype != null && datatype != this.datatype) {
       // set default if mixed
       this.datatype = String.class;
     } else {
       this.datatype = datatype;
     }
+  }
+
+  @Override
+  public int updateWidth(int newLength) {
+    this.length = Math.max(length, newLength);
+    return length;
   }
 
 }

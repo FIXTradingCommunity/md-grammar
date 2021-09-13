@@ -16,6 +16,8 @@ package io.fixprotocol.md.event;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Consumer;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;
@@ -33,7 +35,7 @@ import io.fixprotocol.md.antlr.MarkdownParser;
 import io.fixprotocol.md.antlr.MarkdownParser.DocumentContext;
 
 public final class DocumentParser {
-  
+
   /**
    * Listens for parser errors
    */
@@ -69,7 +71,7 @@ public final class DocumentParser {
           charPositionInLine, msg);
     }
   }
-  
+
   /**
    * Parse a markdown document
    *
@@ -80,7 +82,7 @@ public final class DocumentParser {
    */
   public boolean parse(InputStream inputStream, Consumer<? super GraphContext> contextConsumer)
       throws IOException {
-    return parse(inputStream, contextConsumer, null);
+    return parse(inputStream, contextConsumer, null, null);
   }
 
   /**
@@ -89,16 +91,19 @@ public final class DocumentParser {
    * @param inputStream input as markdown. Text is assumed to encoded as UTF-8.
    * @param contextConsumer consumer of document events
    * @param parserListener listens for parser errors. May be {@code null}.
+   * @param importPath base directory for file imports (if any). May be {@code null}.
    * @return {@code true} if the document is fully parsed without errors
    * @throws IOException if the document cannot be read
    */
-  public boolean parse(InputStream inputStream, Consumer<? super GraphContext> contextConsumer, ParserErrorListener parserListener)
-      throws IOException {
+  public boolean parse(InputStream inputStream, Consumer<? super GraphContext> contextConsumer,
+      ParserErrorListener parserListener, Path importPath) throws IOException {
+    Objects.requireNonNull(inputStream, "Missing inputStream");
+    Objects.requireNonNull(contextConsumer, "Missing contextConsumer");
     final MarkdownLexer lexer = new MarkdownLexer(CharStreams.fromStream(inputStream));
     final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));
     final SyntaxErrorListener errorListener = new SyntaxErrorListener(parserListener);
     parser.addErrorListener(errorListener);
-    final ParseTreeListener listener = new MarkdownEventSource(contextConsumer);
+    final ParseTreeListener listener = new MarkdownEventSource(contextConsumer, importPath);
     final ParseTreeWalker walker = new ParseTreeWalker();
     final DocumentContext documentContext = parser.document();
     walker.walk(listener, documentContext);

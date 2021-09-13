@@ -27,25 +27,25 @@ public final class MarkdownUtil {
 
   /**
    * Translates a markdown literal surrounded by single backtick characters to plain text.
-   * 
+   *
    * Any characters prior to the first backtick or after the last one are ignored. If backticks are
    * not present, the whole string is passed through.
-   * 
+   *
    * @param literal a markdown literal
    * @return unescaped plain text
    * @throws NullPointerException if {@code literal} is null
    */
   public static String markdownLiteralToPlainText(String literal) {
-    int first = Objects.requireNonNull(literal).indexOf(BACKTICK_CHARACTER);
-    int last = literal.lastIndexOf(BACKTICK_CHARACTER);
-    return literal.substring(first == -1 ? 0 : first+1, last == -1 ? literal.length() : last);
+    final int first = Objects.requireNonNull(literal).indexOf(BACKTICK_CHARACTER);
+    final int last = literal.lastIndexOf(BACKTICK_CHARACTER);
+    return literal.substring(first == -1 ? 0 : first + 1, last == -1 ? literal.length() : last);
   }
 
   /**
    * Translates plaintext to markdown
-   * 
+   *
    * A standard markdown paragraph break is used.
-   * 
+   *
    * @param text plaintext
    * @return a markdown string
    * @see #plainTextToMarkdown(String, String)
@@ -109,9 +109,9 @@ public final class MarkdownUtil {
 
   /**
    * Text is surrounded by backtick characters
-   * 
+   *
    * Special characters within the literal are not escaped.
-   * 
+   *
    * @param text plain text
    * @return a markdown literal
    */

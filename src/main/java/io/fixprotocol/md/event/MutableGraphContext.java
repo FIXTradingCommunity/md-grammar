@@ -3,7 +3,7 @@ package io.fixprotocol.md.event;
 
 /**
  * An object that belongs to a graph
- * 
+ *
  * @author Don Mendelson
  *
  */

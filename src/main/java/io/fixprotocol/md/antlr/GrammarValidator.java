@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.Recognizer;
 
 /**
  * Grammar validator
- * 
+ *
  * @author Don Mendelson
  *
  */

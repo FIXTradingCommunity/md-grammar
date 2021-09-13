@@ -41,6 +41,7 @@ public class DetailImpl implements MutableDetail, MutableDocumentContext {
     properties.put(key.toLowerCase(), value);
   }
 
+  @Override
   public int getCharPositionInLine() {
     return charPositionInLine;
   }
@@ -58,6 +59,7 @@ public class DetailImpl implements MutableDetail, MutableDocumentContext {
       return null;
   }
 
+  @Override
   public int getLine() {
     return line;
   }
@@ -78,10 +80,12 @@ public class DetailImpl implements MutableDetail, MutableDocumentContext {
     return MarkdownUtil.stripCell(properties.get(key.toLowerCase()));
   }
 
+  @Override
   public void setCharPositionInLine(int charPositionInLine) {
     this.charPositionInLine = charPositionInLine;
   }
 
+  @Override
   public void setLine(int line) {
     this.line = line;
   }

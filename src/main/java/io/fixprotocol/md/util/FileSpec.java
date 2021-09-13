@@ -5,19 +5,19 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * A specification of a file and optionally a range within the file
- * 
+ *
  * A portion of a file may be specified either as a range of line numbers or as text to search
  * within a file. Either way, a range specifies the start of the file portion and its end. If end is
  * not explicit, then EOF is assumed. If end is specified, then it must be in the same metric as the
  * start. This start and end must both be line numbers or both must be searches.
- * 
+ *
  * A begin search stops at the first instance of the text specified. It is recommended to search for
  * unique values. An end search matches the first instance of text after the the start search's
  * target. The end search need not be unique in the file.
- * 
+ *
  * If a range is not specified, then the whole file is assumed.
- * 
- * 
+ *
+ *
  * @author Don Mendelson
  *
  */
@@ -60,6 +60,7 @@ public class FileSpec {
 
   /**
    * Validates this FileSpec for internal consistency
+   *
    * @return returns {@code true} if this FileSpec is valid
    */
   public boolean isValid() {

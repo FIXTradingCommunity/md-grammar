@@ -16,7 +16,8 @@ package io.fixprotocol.md.event;
 
 import java.util.List;
 
-public interface MutableDetailTable extends DetailTable, MutableDocumentContext, MutableGraphContext {
+public interface MutableDetailTable
+    extends DetailTable, MutableDocumentContext, MutableGraphContext {
 
   /**
    * Adds a collection key-value pairs to an array
@@ -26,13 +27,14 @@ public interface MutableDetailTable extends DetailTable, MutableDocumentContext,
    */
   DetailProperties addProperties(DetailProperties detailProperties);
 
+  @Override
+  List<? extends TableColumn> getTableColumns();
+
   /**
    * Creates a new row and adds it to this table
    *
    * @return a new row instance
    */
   MutableDetailProperties newRow();
-  
-  List<? extends TableColumn> getTableColumns();
 
 }

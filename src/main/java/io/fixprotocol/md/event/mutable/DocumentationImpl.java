@@ -55,6 +55,7 @@ public class DocumentationImpl implements MutableDocumentation, MutableDocumentC
     return this;
   }
 
+  @Override
   public int getCharPositionInLine() {
     return charPositionInLine;
   }
@@ -69,6 +70,7 @@ public class DocumentationImpl implements MutableDocumentation, MutableDocumentC
     return format;
   }
 
+  @Override
   public int getLine() {
     return line;
   }
@@ -78,10 +80,12 @@ public class DocumentationImpl implements MutableDocumentation, MutableDocumentC
     return parent;
   }
 
+  @Override
   public void setCharPositionInLine(int charPositionInLine) {
     this.charPositionInLine = charPositionInLine;
   }
 
+  @Override
   public void setLine(int line) {
     this.line = line;
   }

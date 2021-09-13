@@ -16,9 +16,9 @@ class DatatypeInference {
 
   protected Predicate<String> isNumber = t -> {
     final NumberFormat numberFormat = getNumberFormat();
-    ParsePosition parsePosition = new ParsePosition(0);
+    final ParsePosition parsePosition = new ParsePosition(0);
     numberFormat.parse(t, parsePosition);
-    int index = parsePosition.getIndex();
+    final int index = parsePosition.getIndex();
     if (index == 0 || index < t.length()) {
       return false;
     } else {
@@ -39,6 +39,7 @@ class DatatypeInference {
 
   /**
    * Constructor
+   *
    * @param numberFormat formatter based on Locale
    * @param trueValue String value of true Boolean
    * @param falseValue String value of false Boolean
@@ -49,8 +50,17 @@ class DatatypeInference {
     this.trueValue = trueValue;
   }
 
+  public String getFalseValue() {
+    return falseValue;
+  }
+
+  public String getTrueValue() {
+    return trueValue;
+  }
+
   /**
    * Infers datatype of a String
+   *
    * @param str String to parse
    * @return Inferred datatype Class, defaults to {@code String.class}
    */
@@ -66,14 +76,6 @@ class DatatypeInference {
       return Character.class;
     }
     return String.class;
-  }
-
-  public String getFalseValue() {
-    return falseValue;
-  }
-
-  public String getTrueValue() {
-    return trueValue;
   }
 
   private NumberFormat getNumberFormat() {

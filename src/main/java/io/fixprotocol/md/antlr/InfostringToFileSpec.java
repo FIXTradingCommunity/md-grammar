@@ -28,6 +28,7 @@ public class InfostringToFileSpec {
       return errors;
     }
 
+    @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
         int charPositionInLine, String msg, RecognitionException e) {
       errors++;
@@ -41,7 +42,7 @@ public class InfostringToFileSpec {
 
   /**
    * Parses an infostring and populates a new FileSpec
-   * 
+   *
    * @param infostring string following the opening fence of a fenced code block
    * @return a new FileSpec, or {@code null} if parsing fails
    */
@@ -49,32 +50,32 @@ public class InfostringToFileSpec {
     InfostringLexer lexer;
     try {
       lexer = new InfostringLexer(CharStreams.fromReader(new StringReader(infostring)));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       // would be internal error
       throw new RuntimeException(e);
     }
-    InfostringParser parser = new InfostringParser(new CommonTokenStream(lexer));
+    final InfostringParser parser = new InfostringParser(new CommonTokenStream(lexer));
     final SyntaxErrorListener errorListener = new SyntaxErrorListener();
     parser.addErrorListener(errorListener);
     if (errorListener.getErrors() > 0) {
       return null;
     } else {
-      FileSpec spec = new FileSpec();
-      io.fixprotocol.md.antlr.InfostringParser.InfostringContext ctx = parser.infostring();
+      final FileSpec spec = new FileSpec();
+      final io.fixprotocol.md.antlr.InfostringParser.InfostringContext ctx = parser.infostring();
       final TypeContext type = ctx.type();
       if (type != null) {
         spec.setType(type.getText());
       }
-      ImportspecContext importspec = ctx.importspec();
+      final ImportspecContext importspec = ctx.importspec();
       if (importspec != null) {
         final PathContext pathCtx = importspec.path();
         if (pathCtx != null) {
           final String path = pathCtx.getText();
           spec.setPath(path);
         }
-        StartContext startCtx = importspec.start();
+        final StartContext startCtx = importspec.start();
         if (startCtx != null) {
-          LocationContext startLocation = startCtx.location();
+          final LocationContext startLocation = startCtx.location();
           if (startLocation.LINENUMBER() != null) {
             spec.setStartLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
           }
@@ -82,9 +83,9 @@ public class InfostringToFileSpec {
             spec.setStartSearch(startLocation.STRING().getText());
           }
         }
-        EndContext endCtx = importspec.end();
+        final EndContext endCtx = importspec.end();
         if (endCtx != null) {
-          LocationContext startLocation = endCtx.location();
+          final LocationContext startLocation = endCtx.location();
           if (startLocation.LINENUMBER() != null) {
             spec.setEndLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
           }

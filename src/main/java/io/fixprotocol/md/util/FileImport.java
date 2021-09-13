@@ -19,15 +19,15 @@ public class FileImport {
 
   /**
    * Import text from a file
-   * 
+   *
    * The file to import must be a text file encoded as UTF-8.
-   * 
+   *
    * If no start target is provided in the FileSpec, or the start search is not matched, then the
    * file is read from its beginning.
-   * 
+   *
    * If no end target is provided in the FileSpec, or the end line number is greater than the number
    * of lines in the file, or the end search is not matched, then the file is read until EOF.
-   * 
+   *
    * @param baseDir base directory for resolving file path
    * @param spec specification of a file or file portion. FileSpec should be validated for internal
    *        consistency by invoking {@link FileSpec#isValid()}.
@@ -36,7 +36,7 @@ public class FileImport {
    * @throws InvalidPathException if the path string cannot be converted to a Path.
    */
   public String importTextFromFile(Path baseDir, FileSpec spec) throws IOException {
-    Path filePath = baseDir.resolve(spec.getPath());
+    final Path filePath = baseDir.resolve(spec.getPath());
     final File file = filePath.toFile();
     long startPosition = 0;
     final long length = file.length();
@@ -49,11 +49,11 @@ public class FileImport {
         final FileChannel channel = randomAccessFile.getChannel();
 
         long position = -1;
-        int startLine = spec.getStartLinenumber();
+        final int startLine = spec.getStartLinenumber();
         if (startLine != FileSpec.UNKNOWN_LINENUMBER) {
           position = findLinenumber(randomAccessFile, startLine, startPosition);
         } else {
-          String startSearch = spec.getStartSearch();
+          final String startSearch = spec.getStartSearch();
           if (startSearch != null) {
             position = findText(randomAccessFile, startSearch, startPosition);
           }
@@ -66,11 +66,11 @@ public class FileImport {
 
         long endPosition = length;
         position = -1;
-        int endLine = spec.getEndLinenumber();
+        final int endLine = spec.getEndLinenumber();
         if (endLine != FileSpec.UNKNOWN_LINENUMBER) {
           position = findLinenumber(randomAccessFile, endLine - startLine + 2, startPosition);
         } else {
-          String endSearch = spec.getEndSearch();
+          final String endSearch = spec.getEndSearch();
           if (endSearch != null) {
             position = findText(randomAccessFile, endSearch, startPosition);
           }
@@ -79,21 +79,21 @@ public class FileImport {
           endPosition = position;
         }
 
-        MapMode mode = MapMode.READ_ONLY;
+        final MapMode mode = MapMode.READ_ONLY;
         final MappedByteBuffer buffer =
             channel.map(mode, startPosition, endPosition - startPosition);
         if (buffer.hasRemaining()) {
-          byte[] data = new byte[buffer.remaining()];
+          final byte[] data = new byte[buffer.remaining()];
           buffer.get(data);
           return new String(data, StandardCharsets.UTF_8);
         }
-      } catch (IOException e) {
+      } catch (final IOException e) {
         logger.error(e);
         throw e;
       } finally {
         randomAccessFile.close();
       }
-    } catch (FileNotFoundException e) {
+    } catch (final FileNotFoundException e) {
       logger.error(e);
       throw e;
     }
@@ -118,7 +118,7 @@ public class FileImport {
     randomAccessFile.seek(startPosition);
     String lineText = "";
     do {
-      long position = randomAccessFile.getFilePointer();
+      final long position = randomAccessFile.getFilePointer();
       lineText = randomAccessFile.readLine();
       if (lineText != null && lineText.contains(searchText)) {
         return position;

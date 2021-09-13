@@ -66,15 +66,16 @@ public class AssociativeSet {
   public String get(final String v1) {
     return firstkey.get(v1);
   }
-  
+
   /**
    * Access an association by the first key
+   *
    * @param v1 value to search
    * @param defaultValue value to return if no association found
    * @return the second value of an association or {@code defaultValue} if not found
    */
   public String getOrDefault(String v1, String defaultValue) {
-    String v2 = firstkey.get(v1);
+    final String v2 = firstkey.get(v1);
     return v2 != null ? v2 : defaultValue;
   }
 
@@ -87,15 +88,16 @@ public class AssociativeSet {
   public String getSecond(final String v2) {
     return secondkey.get(v2);
   }
-  
+
   /**
    * Access an association by the second key
+   *
    * @param v2 value to search
    * @param defaultValue value to return if no association found
    * @return the first value of an association or {@code defaultValue} if not found
    */
   public String getSecondOrDefault(String v2, String defaultValue) {
-    String v1 = secondkey.get(v2);
+    final String v1 = secondkey.get(v2);
     return v1 != null ? v1 : defaultValue;
   }
 

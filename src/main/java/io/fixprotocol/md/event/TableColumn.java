@@ -17,10 +17,10 @@ package io.fixprotocol.md.event;
 
 /**
  * Mutable attributes of a table column
- * 
+ *
  * Attributes are mutable because a function that composes a table needs to be adjust spacing, etc.
  * for best presentation.
- * 
+ *
  * @author Don Mendelson
  *
  */
@@ -31,7 +31,7 @@ public interface TableColumn {
   }
 
   /**
-   * 
+   *
    * @return column alignment
    */
   Alignment getAlignment();
@@ -59,14 +59,14 @@ public interface TableColumn {
 
   /**
    * Set the heading to display, may be different than key
-   * 
+   *
    * @param display text to display
    */
   void setHeading(String display);
 
   /**
    * Update the inferred datatype of this column
-   * 
+   *
    * @param datatype a datatype to control formatting of data in the column
    */
   void updateDatatype(Class<?> datatype);
@@ -74,7 +74,7 @@ public interface TableColumn {
 
   /**
    * Update width allowed for column
-   * 
+   *
    * @param newWidth minimum space requested for this column
    * @return actual space allocated so far, may be larger than {@code newWidth}
    */

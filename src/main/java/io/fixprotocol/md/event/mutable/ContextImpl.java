@@ -51,6 +51,7 @@ public class ContextImpl implements MutableContext, MutableDocumentContext {
     keys.add(key);
   }
 
+  @Override
   public int getCharPositionInLine() {
     return charPositionInLine;
   }
@@ -98,6 +99,7 @@ public class ContextImpl implements MutableContext, MutableDocumentContext {
     return level;
   }
 
+  @Override
   public int getLine() {
     return line;
   }
@@ -114,7 +116,7 @@ public class ContextImpl implements MutableContext, MutableDocumentContext {
 
   @Override
   public void setLine(int line) {
-    this.line=line;
+    this.line = line;
   }
 
   @Override

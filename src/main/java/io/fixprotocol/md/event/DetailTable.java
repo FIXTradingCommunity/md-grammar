@@ -22,12 +22,12 @@ import java.util.List;
  * @author Don Mendelson
  *
  */
-public interface DetailTable extends GraphContext, DocumentContext  {
+public interface DetailTable extends GraphContext, DocumentContext {
 
   interface TableRow extends DetailProperties, DocumentContext {
-    
+
   }
-  
+
   /**
    *
    * @return an List of TableColumn that describes this table

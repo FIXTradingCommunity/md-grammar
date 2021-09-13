@@ -37,7 +37,7 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
     private int charPositionInLine;
     private int line;
     private final Map<String, String> properties = new LinkedHashMap<>();
-    
+
     @Override
     public void addIntProperty(String key, int value) {
       addProperty(key, Integer.toString(value));
@@ -57,7 +57,8 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
     @Override
     public int getCharPositionInLine() {
       // if row position unknown, get position of enclosing table
-      return charPositionInLine != UNKNOWN_POSITION ? charPositionInLine : DetailTableImpl.this.getCharPositionInLine();
+      return charPositionInLine != UNKNOWN_POSITION ? charPositionInLine
+          : DetailTableImpl.this.getCharPositionInLine();
     }
 
     @Override
@@ -91,10 +92,12 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
       return properties.get(Objects.requireNonNull(key, "Missing property key").toLowerCase());
     }
 
+    @Override
     public void setCharPositionInLine(int charPositionInLine) {
       this.charPositionInLine = charPositionInLine;
     }
-    
+
+    @Override
     public void setLine(int line) {
       this.line = line;
     }
@@ -110,16 +113,6 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
   private Context parent;
   private final List<TableRow> propertiesList = new ArrayList<>();
 
-  
-  private TableRow clone(DetailProperties detailProperties) {
-    if (detailProperties instanceof TableRow) {
-      return (TableRow) detailProperties;
-    } else {
-      TableRowImpl row = new TableRowImpl();
-      detailProperties.getProperties().forEach(e -> row.properties.put(e.getKey(), e.getValue()));
-      return row;
-    }    
-  }
 
   @Override
   public DetailProperties addProperties(DetailProperties detailProperties) {
@@ -147,7 +140,7 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
   public List<? extends TableColumn> getTableColumns() {
     List<TableColumn> columns = new ArrayList<>();
 
-    for (TableRow r : rows()) {
+    for (final TableRow r : rows()) {
       final List<TableColumn> rowColumns = new ArrayList<>();
       r.getProperties().forEach(p -> {
         final String key = p.getKey();
@@ -174,10 +167,12 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
 
   }
 
+  @Override
   public void setCharPositionInLine(int charPositionInLine) {
     this.charPositionInLine = charPositionInLine;
   }
 
+  @Override
   public void setLine(int line) {
     this.line = line;
   }
@@ -185,6 +180,16 @@ public class DetailTableImpl implements MutableDetailTable, MutableDocumentConte
   @Override
   public void setParent(Context parent) {
     this.parent = parent;
+  }
+
+  private TableRow clone(DetailProperties detailProperties) {
+    if (detailProperties instanceof TableRow) {
+      return (TableRow) detailProperties;
+    } else {
+      final TableRowImpl row = new TableRowImpl();
+      detailProperties.getProperties().forEach(e -> row.properties.put(e.getKey(), e.getValue()));
+      return row;
+    }
   }
 
 }
