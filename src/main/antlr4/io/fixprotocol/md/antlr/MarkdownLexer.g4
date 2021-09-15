@@ -1,110 +1,6 @@
-/* Grammar for a subset of markdown */
-grammar Markdown;
+lexer grammar MarkdownLexer;
 
-document
-:
-	block+ EOF
-;
-
-block
-:
-	heading
-	| paragraph
-	| list
-	| blockquote
-	| fencedcodeblock
-	| table
-	| NEWLINE
-;
-
-heading
-:
-	NEWLINE* HEADINGLINE NEWLINE
-;
-
-paragraph
-:
-	NEWLINE* paragraphline+
-;
-
-paragraphline
-:
-	PARAGRAPHLINE
-	(
-		NEWLINE
-		| EOF
-	)
-;
-
-list
-:
-	NEWLINE* listline+
-;
-
-listline
-:
-	LISTLINE
-	(
-		NEWLINE
-		| EOF
-	)
-;
-
-blockquote
-:
-	NEWLINE* quoteline+
-;
-
-quoteline
-:
-	QUOTELINE
-	(
-		NEWLINE
-		| EOF
-	)
-;
-
-fencedcodeblock
-:
-	FENCE infostring? NEWLINE
-	paragraphline+
-	FENCE
-;
-
-infostring
-:
-	PARAGRAPHLINE
-;
-
-table
-:
-	NEWLINE* tableheading tabledelimiterrow tablerow+
-;
-
-tableheading
-:
-	tablerow
-;
-
-tablerow
-:
-	cell+ PIPE?
-	(
-		NEWLINE
-		| EOF
-	)
-;
-
-cell
-:
-	CELLTEXT
-;
-
-tabledelimiterrow
-:
-	TABLEDELIMINATORCELL+ PIPE? NEWLINE
-;
-
+/* default mode */
 
 LITERAL
 :
@@ -140,9 +36,9 @@ TABLEDELIMINATORCELL
 	PIPE? ' '? ':'? '-'+ ':'? ' '?
 ;
 
-FENCE
+OPEN_FENCE
 :
-	'```'
+	'```' -> mode(FENCED)
 ;
 
 IGNORE_WS
@@ -229,7 +125,6 @@ fragment
 ESCAPEDPIPE
 :
 	{_input.LA(-1) == 92}?
-
 	'|'
 ;
 
@@ -269,5 +164,79 @@ LINECHAR
 	~[\n\r`]
 ;
 
+mode FENCED;
+
+TEXTLINE
+:
+	INITIALTEXTCHAR TEXTCHAR* NEWLINE
+;
 
 
+INITIALTEXTCHAR
+:
+	{_input.LA(-1) == 10 || _input.LA(-1) == 13}?
+	~[\n\r]
+;
+
+CLOSE_FENCE
+:
+	'```' -> mode(DEFAULT_MODE)
+;
+
+LINENUMBER
+:
+	DIGIT+
+;
+
+IMPORT
+:
+	'import'
+;
+
+FROM
+:
+	'from'
+;
+
+TO
+:
+	'to' | '-'
+;
+
+STRING
+:	
+	'"' LINECHAR*? '"' 
+;
+
+WORD
+:
+	WORDCHAR+
+;
+
+FENCED_NEWLINE
+:
+	'\r'? '\n' -> type(NEWLINE)
+;
+
+FENCED_IGNORE_WS
+:
+	WS -> skip
+;
+
+fragment
+DIGIT
+:
+	[0-9]
+;
+
+fragment
+WORDCHAR
+:
+	~[\n\r\t |`]
+;
+
+fragment
+TEXTCHAR
+:
+	~[\n\r]
+;

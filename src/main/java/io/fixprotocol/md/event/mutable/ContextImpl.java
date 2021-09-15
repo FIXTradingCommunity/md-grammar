@@ -19,9 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import io.fixprotocol.md.event.Context;
 import io.fixprotocol.md.event.MutableContext;
-import io.fixprotocol.md.event.MutableDocumentContext;
 
-public class ContextImpl implements MutableContext, MutableDocumentContext {
+public class ContextImpl implements MutableContext {
 
   private int charPositionInLine = UNKNOWN_POSITION;
   private final List<String> keys = new ArrayList<>();

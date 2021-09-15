@@ -31,7 +31,7 @@ import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.TableColumn;
 import io.fixprotocol.md.util.ListUtil;
 
-public class DetailTableImpl implements MutableDetailTable, MutableDocumentContext {
+public class DetailTableImpl implements MutableDetailTable {
 
   private class TableRowImpl implements MutableDetailProperties, TableRow, MutableDocumentContext {
     private int charPositionInLine;

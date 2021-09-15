@@ -32,18 +32,24 @@ import io.fixprotocol.md.antlr.MarkdownParser.BlockContext;
 import io.fixprotocol.md.antlr.MarkdownParser.BlockquoteContext;
 import io.fixprotocol.md.antlr.MarkdownParser.CellContext;
 import io.fixprotocol.md.antlr.MarkdownParser.DocumentContext;
+import io.fixprotocol.md.antlr.MarkdownParser.EndContext;
 import io.fixprotocol.md.antlr.MarkdownParser.FencedcodeblockContext;
 import io.fixprotocol.md.antlr.MarkdownParser.HeadingContext;
+import io.fixprotocol.md.antlr.MarkdownParser.ImportspecContext;
 import io.fixprotocol.md.antlr.MarkdownParser.InfostringContext;
 import io.fixprotocol.md.antlr.MarkdownParser.ListContext;
 import io.fixprotocol.md.antlr.MarkdownParser.ListlineContext;
+import io.fixprotocol.md.antlr.MarkdownParser.LocationContext;
 import io.fixprotocol.md.antlr.MarkdownParser.ParagraphContext;
 import io.fixprotocol.md.antlr.MarkdownParser.ParagraphlineContext;
+import io.fixprotocol.md.antlr.MarkdownParser.PathContext;
 import io.fixprotocol.md.antlr.MarkdownParser.QuotelineContext;
+import io.fixprotocol.md.antlr.MarkdownParser.StartContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TableContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TabledelimiterrowContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TableheadingContext;
 import io.fixprotocol.md.antlr.MarkdownParser.TablerowContext;
+import io.fixprotocol.md.antlr.MarkdownParser.TextlineContext;
 import io.fixprotocol.md.event.ContextFactory;
 import io.fixprotocol.md.event.Documentation;
 import io.fixprotocol.md.event.GraphContext;
@@ -63,7 +69,7 @@ import io.fixprotocol.md.util.FileSpec;
  * @author Don Mendelson
  *
  */
-public class MarkdownEventSource implements MarkdownListener {
+public class MarkdownEventSource implements MarkdownParserListener {
 
   private static final String CELL_NONTEXT = " |\t";
   private static final String WHITESPACE_REGEX = "[ \t]";
@@ -91,19 +97,19 @@ public class MarkdownEventSource implements MarkdownListener {
     return text.substring(beginIndex, endIndex);
   }
 
-  private final ContextFactory contextFactory = new ContextFactory();
-
-  private final FileImport fileImport = new FileImport();
+  private final Path baseDir;
 
   private final Consumer<? super GraphContext> contextConsumer;
+
+  private final ContextFactory contextFactory = new ContextFactory();
   private final Deque<MutableContext> contexts = new ArrayDeque<>();
+  private final FileImport fileImport = new FileImport();
   private boolean inTableHeading = false;
   private final List<String> lastBlocks = new ArrayList<>();
   private int lastColumnNo;
   private final List<String> lastRowValues = new ArrayList<>();
   private final List<String> lastTableHeadings = new ArrayList<>();
   private final Logger logger = LogManager.getLogger(getClass());
-  private final Path baseDir;
 
   /**
    * Constructor
@@ -152,6 +158,12 @@ public class MarkdownEventSource implements MarkdownListener {
   }
 
   @Override
+  public void enterEnd(EndContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
   public void enterEveryRule(ParserRuleContext ctx) {
     // no action
 
@@ -167,6 +179,12 @@ public class MarkdownEventSource implements MarkdownListener {
   public void enterHeading(HeadingContext ctx) {
     supplyLastDocumentation();
     lastBlocks.clear();
+  }
+
+  @Override
+  public void enterImportspec(ImportspecContext ctx) {
+    // TODO Auto-generated method stub
+    
   }
 
   @Override
@@ -188,6 +206,12 @@ public class MarkdownEventSource implements MarkdownListener {
   }
 
   @Override
+  public void enterLocation(LocationContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
   public void enterParagraph(ParagraphContext ctx) {
 
   }
@@ -199,9 +223,21 @@ public class MarkdownEventSource implements MarkdownListener {
   }
 
   @Override
+  public void enterPath(PathContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
   public void enterQuoteline(QuotelineContext ctx) {
     // no action
 
+  }
+
+  @Override
+  public void enterStart(StartContext ctx) {
+    // TODO Auto-generated method stub
+    
   }
 
   @Override
@@ -257,6 +293,12 @@ public class MarkdownEventSource implements MarkdownListener {
   }
 
   @Override
+  public void exitEnd(EndContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
   public void exitEveryRule(ParserRuleContext ctx) {
     // no action
 
@@ -272,11 +314,10 @@ public class MarkdownEventSource implements MarkdownListener {
   public void exitFencedcodeblock(FencedcodeblockContext ctx) {
     String format = Documentation.MARKDOWN;
     final InfostringContext infostringCtx = ctx.infostring();
+    final ImportspecContext importspecCtx = ctx.importspec();
     String text = "";
     if (infostringCtx != null) {
-      final String infostring = infostringCtx.PARAGRAPHLINE().getText();
-      final InfostringToFileSpec infostringToFileSpec = new InfostringToFileSpec();
-      final FileSpec spec = infostringToFileSpec.parse(infostring);
+      final FileSpec spec = infostringToFileSpec(infostringCtx, importspecCtx);
       if (spec != null) {
         if (spec.isValid()) {
           if (spec.getType() != null) {
@@ -299,8 +340,8 @@ public class MarkdownEventSource implements MarkdownListener {
       }
     }
     if (text.isEmpty()) {
-      final List<ParagraphlineContext> lines = ctx.paragraphline();
-      text = lines.stream().map(p -> p.PARAGRAPHLINE().getText()).collect(Collectors.joining("\n"));
+      final List<TextlineContext> lines = ctx.textline();
+      text = lines.stream().map(l -> l.getText()).collect(Collectors.joining("\n"));
     }
 
     final MutableDocumentation documentation = contextFactory.createDocumentation(text, format);
@@ -324,6 +365,12 @@ public class MarkdownEventSource implements MarkdownListener {
   }
 
   @Override
+  public void exitImportspec(ImportspecContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
   public void exitInfostring(InfostringContext ctx) {
     // TODO Auto-generated method stub
 
@@ -342,6 +389,12 @@ public class MarkdownEventSource implements MarkdownListener {
   }
 
   @Override
+  public void exitLocation(LocationContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
   public void exitParagraph(ParagraphContext ctx) {
     final List<ParagraphlineContext> textlines = ctx.paragraphline();
     lastBlocks.add(normalizeParagraph(textlines));
@@ -354,9 +407,21 @@ public class MarkdownEventSource implements MarkdownListener {
   }
 
   @Override
+  public void exitPath(PathContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
   public void exitQuoteline(QuotelineContext ctx) {
     // no action
 
+  }
+
+  @Override
+  public void exitStart(StartContext ctx) {
+    // TODO Auto-generated method stub
+    
   }
 
   @Override
@@ -452,6 +517,44 @@ public class MarkdownEventSource implements MarkdownListener {
     contextual.setParent(lastContext);
   }
 
+  private FileSpec infostringToFileSpec(InfostringContext infostring,
+      ImportspecContext importspec) {
+    final FileSpec spec = new FileSpec();
+    TerminalNode type = infostring.WORD();
+    if (type != null) {
+      spec.setType(type.getText());
+    }
+    if (importspec != null) {
+      final PathContext pathCtx = importspec.path();
+      if (pathCtx != null) {
+        final String path = pathCtx.getText();
+        spec.setPath(path);
+      }
+      final StartContext startCtx = importspec.start();
+      if (startCtx != null) {
+        final LocationContext startLocation = startCtx.location();
+        if (startLocation.LINENUMBER() != null) {
+          spec.setStartLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
+        }
+        if (startLocation.STRING() != null) {
+          spec.setStartSearch(startLocation.STRING().getText());
+        }
+      }
+      final EndContext endCtx = importspec.end();
+      if (endCtx != null) {
+        final LocationContext startLocation = endCtx.location();
+        if (startLocation.LINENUMBER() != null) {
+          spec.setEndLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
+        }
+        if (startLocation.STRING() != null) {
+          spec.setEndSearch(startLocation.STRING().getText());
+        }
+      }
+    }
+
+    return spec;
+  }
+
   private String normalizeBlocks() {
     return String.join("\n\n", lastBlocks);
   }
@@ -463,6 +566,18 @@ public class MarkdownEventSource implements MarkdownListener {
       updateParentContext(documentation);
       contextConsumer.accept(documentation);
     }
+  }
+
+  @Override
+  public void enterTextline(TextlineContext ctx) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void exitTextline(TextlineContext ctx) {
+    // TODO Auto-generated method stub
+    
   }
 
 }

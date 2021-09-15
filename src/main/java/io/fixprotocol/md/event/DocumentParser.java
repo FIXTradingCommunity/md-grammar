@@ -28,7 +28,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import io.fixprotocol.md.antlr.MarkdownBaseListener;
+import io.fixprotocol.md.antlr.MarkdownParserBaseListener;
 import io.fixprotocol.md.antlr.MarkdownEventSource;
 import io.fixprotocol.md.antlr.MarkdownLexer;
 import io.fixprotocol.md.antlr.MarkdownParser;
@@ -99,9 +99,12 @@ public final class DocumentParser {
       ParserErrorListener parserListener, Path importPath) throws IOException {
     Objects.requireNonNull(inputStream, "Missing inputStream");
     Objects.requireNonNull(contextConsumer, "Missing contextConsumer");
-    final MarkdownLexer lexer = new MarkdownLexer(CharStreams.fromStream(inputStream));
-    final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));
     final SyntaxErrorListener errorListener = new SyntaxErrorListener(parserListener);
+    final MarkdownLexer lexer = new MarkdownLexer(CharStreams.fromStream(inputStream));
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(errorListener);
+    final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));
+    parser.removeErrorListeners();
     parser.addErrorListener(errorListener);
     final ParseTreeListener listener = new MarkdownEventSource(contextConsumer, importPath);
     final ParseTreeWalker walker = new ParseTreeWalker();
@@ -122,14 +125,16 @@ public final class DocumentParser {
    */
   public boolean validate(InputStream inputStream, ParserErrorListener parserListener)
       throws IOException {
-    final MarkdownLexer lexer = new MarkdownLexer(CharStreams.fromStream(inputStream));
-    final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));
     final SyntaxErrorListener errorListener = new SyntaxErrorListener(parserListener);
+    final MarkdownLexer lexer = new MarkdownLexer(CharStreams.fromStream(inputStream));
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(errorListener);
+    final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));  
+    parser.removeErrorListeners();
     parser.addErrorListener(errorListener);
     final ParseTreeWalker walker = new ParseTreeWalker();
     final DocumentContext documentContext = parser.document();
-    walker.walk(new MarkdownBaseListener(), documentContext);
-
+    walker.walk(new MarkdownParserBaseListener(), documentContext);
     final int errors = errorListener.getErrors();
     return (errors == 0);
   }

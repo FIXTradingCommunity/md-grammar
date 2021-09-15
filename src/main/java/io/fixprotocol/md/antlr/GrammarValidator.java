@@ -28,6 +28,7 @@ final class GrammarValidator extends BaseErrorListener {
   public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
       int charPositionInLine, String msg, RecognitionException e) {
     isValid = false;
-    out.format("Failed to parse at line %d position %d due to %s", line, charPositionInLine, msg);
+    out.format("%s failed to parse at line %d position %d due to %s%n",
+        recognizer.getClass().getName(), line, charPositionInLine, msg);
   }
 }
