@@ -101,7 +101,7 @@ public class DocumentWriter implements AutoCloseable {
       for (final Entry<String, String> p : row.getProperties()) {
         final TableColumn tc = columnsByKey.get(p.getKey());
         if (tc != null) {
-          // Set spacing to longest value in each column
+          // Set spacing to the longest value in each column
           tc.updateWidth(p.getValue().length());
           // Infer common datatype
           final Class<?> datatype = datatypes.inferDatatype(p.getValue());

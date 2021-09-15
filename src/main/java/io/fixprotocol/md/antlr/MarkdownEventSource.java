@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.logging.log4j.LogManager;
@@ -341,7 +342,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
     }
     if (text.isEmpty()) {
       final List<TextlineContext> lines = ctx.textline();
-      text = lines.stream().map(l -> l.getText()).collect(Collectors.joining("\n"));
+      text = lines.stream().map(RuleContext::getText).collect(Collectors.joining("\n"));
     }
 
     final MutableDocumentation documentation = contextFactory.createDocumentation(text, format);

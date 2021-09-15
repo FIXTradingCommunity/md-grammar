@@ -30,14 +30,14 @@ public interface DetailTable extends GraphContext, DocumentContext {
 
   /**
    *
-   * @return an List of TableColumn that describes this table
+   * @return a List of TableColumn that describes this table
    */
   List<? extends TableColumn> getTableColumns();
 
   /**
-   * Supplies a Iterable of row values
+   * Supplies an Iterable of row values
    *
-   * @return a Iterable of TableRow
+   * @return an Iterable of TableRow
    */
   Iterable<? extends TableRow> rows();
 }

@@ -69,14 +69,18 @@ class MdGrammarTest {
     }
   }
 
-  @Disabled
   @ParameterizedTest
   @ValueSource(strings = {"src/test/resources/md2orchestra-proto.md"})
   void testRig(String fileName) throws Exception {
-    String[] args = new String[] {"io.fixprotocol.md.antlr.Markdown", "document", "-tree",
-        "-tokens", fileName};
-    TestRig testRig = new TestRig(args);
-    testRig.process();
+    try {
+      System.setOut(new PrintStream(new File("target/test/MdGrammarTest.txt")));
+      String[] args = new String[]{"io.fixprotocol.md.antlr.Markdown", "document", "-tree",
+              "-tokens", fileName};
+      TestRig testRig = new TestRig(args);
+      testRig.process();
+    } finally {
+      System.setOut(System.out);
+    }
   }
 
   @ParameterizedTest

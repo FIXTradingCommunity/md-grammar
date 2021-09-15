@@ -22,7 +22,7 @@ public interface DocumentContext {
   int getCharPositionInLine();
 
   /**
-   * Line number in a document
+   * Returns ine number in a document
    *
    * @return line number or {@link #UNKNOWN_POSITION}
    */

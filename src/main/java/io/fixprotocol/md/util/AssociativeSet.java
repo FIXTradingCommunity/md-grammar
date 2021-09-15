@@ -39,7 +39,7 @@ public class AssociativeSet {
   /**
    * Add values to this AssociativeSet
    *
-   * @param values a array of two-element arrays
+   * @param values an array of two-element arrays
    * @return {@code true} if this set did not already contain the specified elements
    */
   public boolean addAll(String[][] values) {

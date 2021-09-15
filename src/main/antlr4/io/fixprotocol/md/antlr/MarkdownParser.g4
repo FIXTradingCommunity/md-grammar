@@ -68,7 +68,7 @@ quoteline
 
 fencedcodeblock
 :
-	OPEN_FENCE infostring? FENCED_IGNORE_WS? importspec? NEWLINE
+	OPEN_FENCE infostring? FENCED_IGNORE_WS? importspec? FENCED_NEWLINE
 	textline*
 	CLOSE_FENCE
 ;

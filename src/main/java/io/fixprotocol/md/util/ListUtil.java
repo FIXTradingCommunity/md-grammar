@@ -13,8 +13,6 @@ public final class ListUtil {
   public static <T> void insert(List<T> dest, int insertPos, List<T> source, int from,
       int toExclusive) {
     dest.addAll(insertPos, source.subList(from, toExclusive));
-    // System.out.format("Insert %s at %d => %s%n", source.subList(from, toExclusive).toString(),
-    // insertPos, dest.toString());
   }
 
   /**
@@ -43,8 +41,6 @@ public final class ListUtil {
     for (int pos2 = 0; pos2 < second.size(); pos2++) {
       final int matchPos = merged.indexOf(second.get(pos2));
       if (matchPos != -1) {
-        // System.out.format("matched at pos2=%d pos1=%d val=[%s]%n", pos2, matchPos,
-        // second.get(pos2));
         insert(merged, matchPos, second, lastMatchPos + 1, pos2);
         lastMatchPos = pos2;
       } /*

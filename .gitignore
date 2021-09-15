@@ -6,3 +6,4 @@ jaxb
 .idea
 *.iml
 *.versionsBackup
+/src/main/antlr4/.antlr

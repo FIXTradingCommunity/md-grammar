@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 public interface DetailProperties {
 
   /**
-   * Access a integer property by its key
+   * Access an integer property by its key
    *
    * @param key key to the property
    * @return value of the property, or {@code null} if the property does not exist or is non-numeric

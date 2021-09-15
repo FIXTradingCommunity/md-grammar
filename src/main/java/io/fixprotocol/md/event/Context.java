@@ -33,7 +33,7 @@ public interface Context extends GraphContext, DocumentContext {
   /**
    * An array of keywords. Position may be significant.
    *
-   * @return an array of key words or {@link #EMPTY_CONTEXT} if no keys are known
+   * @return an array of keywords or {@link #EMPTY_CONTEXT} if no keys are known
    */
   String[] getKeys();
 

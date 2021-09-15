@@ -18,7 +18,7 @@ package io.fixprotocol.md.event;
 /**
  * Mutable attributes of a table column
  *
- * Attributes are mutable because a function that composes a table needs to be adjust spacing, etc.
+ * Attributes are mutable because a function that composes a table needs to adjust spacing, etc.
  * for best presentation.
  *
  * @author Don Mendelson
@@ -58,7 +58,7 @@ public interface TableColumn {
   int getWidth();
 
   /**
-   * Set the heading to display, may be different than key
+   * Set the heading to display, may be different from its key
    *
    * @param display text to display
    */

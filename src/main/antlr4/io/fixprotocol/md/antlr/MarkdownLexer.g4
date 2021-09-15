@@ -166,9 +166,14 @@ LINECHAR
 
 mode FENCED;
 
+CLOSE_FENCE
+:
+	'```' (FENCED_NEWLINE | EOF) -> mode(DEFAULT_MODE)
+;
+
 TEXTLINE
 :
-	INITIALTEXTCHAR TEXTCHAR* NEWLINE
+	INITIALTEXTCHAR TEXTCHAR* FENCED_NEWLINE
 ;
 
 
@@ -176,11 +181,6 @@ INITIALTEXTCHAR
 :
 	{_input.LA(-1) == 10 || _input.LA(-1) == 13}?
 	~[\n\r]
-;
-
-CLOSE_FENCE
-:
-	'```' -> mode(DEFAULT_MODE)
 ;
 
 LINENUMBER
@@ -215,7 +215,7 @@ WORD
 
 FENCED_NEWLINE
 :
-	'\r'? '\n' -> type(NEWLINE)
+	'\r'? '\n' 
 ;
 
 FENCED_IGNORE_WS

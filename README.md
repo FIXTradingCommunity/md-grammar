@@ -1,6 +1,6 @@
 # md-grammar
 
-Parser and writer for markdown documents. 
+Parser and writer for Markdown documents. 
 
 The markdown grammar follows [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). 
 

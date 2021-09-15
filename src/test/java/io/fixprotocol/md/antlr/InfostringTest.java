@@ -165,14 +165,18 @@ class InfostringTest {
     fail("Fenced code block not found");
   }
 
-
   @ParameterizedTest
   @ValueSource(strings = {"src/test/resources/fileimport.md"})
   void testRig(String fileName) throws Exception {
-    String[] args =
-        new String[] {"io.fixprotocol.md.antlr.Markdown", "document", "-tree", "-tokens", fileName};
-    TestRig testRig = new TestRig(args);
-    testRig.process();
+    try {
+      System.setOut(new PrintStream(new File("target/test/MdGrammarTest-fileimport.txt")));
+      String[] args =
+          new String[] {"io.fixprotocol.md.antlr.Markdown", "document", "-tree", "-tokens", fileName};
+      TestRig testRig = new TestRig(args);
+      testRig.process();
+    } finally {
+      System.setOut(System.out);
+    }
   }
 
 }

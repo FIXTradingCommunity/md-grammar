@@ -44,7 +44,7 @@ public final class MarkdownUtil {
   /**
    * Translates plaintext to markdown
    *
-   * A standard markdown paragraph break is used.
+   * A standard Markdown paragraph break is used.
    *
    * @param text plaintext
    * @return a markdown string
@@ -121,7 +121,7 @@ public final class MarkdownUtil {
 
   /**
    * Trims leading and trailing whitespace or pipe characters, leaving just the text within a
-   * markdown table cell.
+   * Markdown table cell.
    *
    * @param str string to strip
    * @return a string without leading or trailing whitespace, or {@code null} if the parameter is
