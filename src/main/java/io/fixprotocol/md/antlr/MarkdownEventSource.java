@@ -317,7 +317,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
     final InfostringContext infostringCtx = ctx.infostring();
     final ImportspecContext importspecCtx = ctx.importspec();
     String text = "";
-    if (infostringCtx != null) {
+    if (importspecCtx != null) {
       final FileSpec spec = infostringToFileSpec(infostringCtx, importspecCtx);
       if (spec != null) {
         if (spec.isValid()) {

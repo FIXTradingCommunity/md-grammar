@@ -10,5 +10,4 @@ publisher, date, and rights.
 **Example:** Metadata
 
 ```xml import md2orchestra-proto.xml from "<fixr:metadata>" to "</fixr:metadata>"
-
 ```

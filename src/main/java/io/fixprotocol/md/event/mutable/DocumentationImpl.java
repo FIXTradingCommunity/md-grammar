@@ -15,10 +15,9 @@
 package io.fixprotocol.md.event.mutable;
 
 import io.fixprotocol.md.event.Context;
-import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.MutableDocumentation;
 
-public class DocumentationImpl implements MutableDocumentation, MutableDocumentContext {
+public class DocumentationImpl implements MutableDocumentation {
 
   private int charPositionInLine = UNKNOWN_POSITION;
   private final String documentation;

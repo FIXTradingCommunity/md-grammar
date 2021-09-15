@@ -22,9 +22,8 @@ import java.util.Map.Entry;
 import io.fixprotocol.md.event.Context;
 import io.fixprotocol.md.event.MarkdownUtil;
 import io.fixprotocol.md.event.MutableDetail;
-import io.fixprotocol.md.event.MutableDocumentContext;
 
-public class DetailImpl implements MutableDetail, MutableDocumentContext {
+public class DetailImpl implements MutableDetail {
 
   private int charPositionInLine = UNKNOWN_POSITION;
   private int line = UNKNOWN_POSITION;
