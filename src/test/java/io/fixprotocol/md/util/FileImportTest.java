@@ -51,7 +51,7 @@ class FileImportTest {
   void importBySearch() throws IOException {
     fileSpec.setPath("md2orchestra-proto.md");
     fileSpec.setStartSearch("### Codeset Sides");
-    fileSpec.setEndSearch("## Message CrossOrderCancelReplaceRequest");   
+    fileSpec.setEndSearch("multileg instruments)");   
     Path baseDir = Path.of("src", "test", "resources");
     String text = fileImport.importTextFromFile(baseDir , fileSpec);
     assertTrue(text.startsWith("### Codeset Sides"));

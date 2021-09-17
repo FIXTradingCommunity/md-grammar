@@ -55,7 +55,7 @@ public class FileImport {
         } else {
           final String startSearch = spec.getStartSearch();
           if (startSearch != null) {
-            position = findText(randomAccessFile, startSearch, startPosition);
+            position = findTextStart(randomAccessFile, startSearch, startPosition);
           }
         }
         if (position != -1) {
@@ -72,7 +72,7 @@ public class FileImport {
         } else {
           final String endSearch = spec.getEndSearch();
           if (endSearch != null) {
-            position = findText(randomAccessFile, endSearch, startPosition);
+            position = findTextEnd(randomAccessFile, endSearch, startPosition);
           }
         }
         if (position != -1) {
@@ -113,15 +113,31 @@ public class FileImport {
     return position;
   }
 
-  private long findText(RandomAccessFile randomAccessFile, String searchText, long startPosition)
+  private long findTextStart(RandomAccessFile randomAccessFile, String searchText, long startPosition)
       throws IOException {
     randomAccessFile.seek(startPosition);
     String lineText = "";
     do {
+      // position of start of line
       final long position = randomAccessFile.getFilePointer();
       lineText = randomAccessFile.readLine();
       if (lineText != null && lineText.contains(searchText)) {
         return position;
+      }
+    } while (lineText != null);
+    return -1;
+  }
+  
+  private long findTextEnd(RandomAccessFile randomAccessFile, String searchText, long startPosition)
+      throws IOException {
+    randomAccessFile.seek(startPosition);
+    String lineText = "";
+    do {
+      // position of start of line
+      final long position = randomAccessFile.getFilePointer();
+      lineText = randomAccessFile.readLine();
+      if (lineText != null && lineText.contains(searchText)) {
+        return position + lineText.length();
       }
     } while (lineText != null);
     return -1;

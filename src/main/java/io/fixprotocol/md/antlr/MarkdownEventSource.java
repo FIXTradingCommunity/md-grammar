@@ -172,8 +172,8 @@ public class MarkdownEventSource implements MarkdownParserListener {
 
   @Override
   public void enterFencedcodeblock(FencedcodeblockContext ctx) {
-    // TODO Auto-generated method stub
-
+    supplyLastDocumentation();
+    lastBlocks.clear();
   }
 
   @Override
@@ -538,7 +538,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
           spec.setStartLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
         }
         if (startLocation.STRING() != null) {
-          spec.setStartSearch(startLocation.STRING().getText());
+          spec.setStartSearch(startLocation.STRING().getText().replaceAll("\"", ""));
         }
       }
       final EndContext endCtx = importspec.end();
@@ -548,7 +548,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
           spec.setEndLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
         }
         if (startLocation.STRING() != null) {
-          spec.setEndSearch(startLocation.STRING().getText());
+          spec.setEndSearch(startLocation.STRING().getText().replaceAll("\"", ""));
         }
       }
     }

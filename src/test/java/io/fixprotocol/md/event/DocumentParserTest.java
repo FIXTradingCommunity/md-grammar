@@ -40,6 +40,12 @@ class DocumentParserTest {
           final Documentation documentation = (Documentation) graphContext;
           String text = documentation.getDocumentation();
           out.println(text);
+          // tests ignore whitespace, line endings
+          if (documentation.getFormat().equals("xml")) {
+            assertTrue(text.contains("<fixr:metadata>"));
+            assertTrue(text.contains("</fixr:metadata>"));
+            assertFalse(text.contains("<fixr:codeSets>"));
+          }
         }
       }
     };
