@@ -21,11 +21,16 @@ public interface DocumentContext {
    */
   int getCharPositionInLine();
 
+  int getEndOffset();
+
   /**
-   * Returns ine number in a document
+   * Returns line number in a document
    *
    * @return line number or {@link #UNKNOWN_POSITION}
    */
   int getLine();
+
+  int getStartOffset();
+
 
 }

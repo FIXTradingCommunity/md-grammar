@@ -26,9 +26,11 @@ import io.fixprotocol.md.event.MutableDetail;
 public class DetailImpl implements MutableDetail {
 
   private int charPositionInLine = UNKNOWN_POSITION;
+  private int endOffset = UNKNOWN_POSITION;
   private int line = UNKNOWN_POSITION;
   private Context parent;
   private final Map<String, String> properties = new LinkedHashMap<>();
+  private int startOffset = UNKNOWN_POSITION;
 
   @Override
   public void addIntProperty(String key, int value) {
@@ -43,6 +45,11 @@ public class DetailImpl implements MutableDetail {
   @Override
   public int getCharPositionInLine() {
     return charPositionInLine;
+  }
+
+  @Override
+  public int getEndOffset() {
+    return endOffset;
   }
 
   @Override
@@ -68,7 +75,6 @@ public class DetailImpl implements MutableDetail {
     return parent;
   }
 
-
   @Override
   public Collection<Entry<String, String>> getProperties() {
     return Collections.unmodifiableSet(properties.entrySet());
@@ -80,8 +86,19 @@ public class DetailImpl implements MutableDetail {
   }
 
   @Override
+  public int getStartOffset() {
+    return startOffset;
+  }
+
+
+  @Override
   public void setCharPositionInLine(int charPositionInLine) {
     this.charPositionInLine = charPositionInLine;
+  }
+
+  @Override
+  public void setEndOffset(int endOffset) {
+    this.endOffset = endOffset;
   }
 
   @Override
@@ -92,6 +109,11 @@ public class DetailImpl implements MutableDetail {
   @Override
   public void setParent(Context parent) {
     this.parent = parent;
+  }
+
+  @Override
+  public void setStartOffset(int startOffset) {
+    this.startOffset = startOffset;
   }
 
 

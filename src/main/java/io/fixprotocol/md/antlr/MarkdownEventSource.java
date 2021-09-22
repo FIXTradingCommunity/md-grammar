@@ -62,6 +62,7 @@ import io.fixprotocol.md.event.MutableDocumentContext;
 import io.fixprotocol.md.event.MutableDocumentation;
 import io.fixprotocol.md.event.MutableGraphContext;
 import io.fixprotocol.md.util.FileImport;
+import io.fixprotocol.md.util.FileImport.Imported;
 import io.fixprotocol.md.util.FileSpec;
 
 /**
@@ -161,7 +162,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void enterEnd(EndContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -185,7 +186,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void enterImportspec(ImportspecContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -209,7 +210,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void enterLocation(LocationContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -226,7 +227,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void enterPath(PathContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -238,7 +239,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void enterStart(StartContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -263,6 +264,12 @@ public class MarkdownEventSource implements MarkdownParserListener {
   public void enterTablerow(TablerowContext ctx) {
     lastColumnNo = 0;
     lastRowValues.clear();
+  }
+
+  @Override
+  public void enterTextline(TextlineContext ctx) {
+    // TODO Auto-generated method stub
+
   }
 
   @Override
@@ -296,7 +303,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void exitEnd(EndContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -318,7 +325,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
     final ImportspecContext importspecCtx = ctx.importspec();
     String text = "";
     if (importspecCtx != null) {
-      final FileSpec spec = infostringToFileSpec(infostringCtx, importspecCtx);
+      final FileSpec spec = MarkdownImportEvent.infostringToFileSpec(infostringCtx, importspecCtx);
       if (spec != null) {
         if (spec.isValid()) {
           if (spec.getType() != null) {
@@ -327,7 +334,8 @@ public class MarkdownEventSource implements MarkdownParserListener {
           final String path = spec.getPath();
           if (path != null) {
             try {
-              text = fileImport.importTextFromFile(baseDir, spec);
+              final Imported imported = fileImport.importFromFile(baseDir, spec);
+              text = FileImport.bufferToText(imported.getBuffer());
             } catch (final IOException e) {
               logger.error(
                   "Failed to import file specified by infostring for fenced code block is invalid at line {} position {}",
@@ -340,13 +348,18 @@ public class MarkdownEventSource implements MarkdownParserListener {
             infostringCtx.start.getLine(), infostringCtx.start.getCharPositionInLine());
       }
     }
+    // If no file import, then use contents of fenced codeblock
     if (text.isEmpty()) {
       final List<TextlineContext> lines = ctx.textline();
       text = lines.stream().map(RuleContext::getText).collect(Collectors.joining("\n"));
     }
 
     final MutableDocumentation documentation = contextFactory.createDocumentation(text, format);
-    updateParentContext(documentation);
+    documentation.setLine(ctx.start.getLine());
+    documentation.setCharPositionInLine(ctx.start.getCharPositionInLine());
+    documentation.setStartOffset(ctx.start.getStartIndex());
+    documentation.setEndOffset(ctx.stop.getStopIndex());
+    updateParentGraphContext(documentation);
     contextConsumer.accept(documentation);
   }
 
@@ -360,7 +373,9 @@ public class MarkdownEventSource implements MarkdownParserListener {
     final MutableContext context = contextFactory.createContext(headingWords, headingLevel);
     context.setLine(ctx.start.getLine());
     context.setCharPositionInLine(ctx.start.getCharPositionInLine());
-    updateParentContext(context);
+    context.setStartOffset(ctx.start.getStartIndex());
+    context.setEndOffset(ctx.stop.getStopIndex());
+    updateGraphContext(context);
 
     contextConsumer.accept(context);
   }
@@ -368,7 +383,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void exitImportspec(ImportspecContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -392,7 +407,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void exitLocation(LocationContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -410,7 +425,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void exitPath(PathContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -422,7 +437,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
   @Override
   public void exitStart(StartContext ctx) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -439,6 +454,8 @@ public class MarkdownEventSource implements MarkdownParserListener {
           final MutableDocumentContext mutableRow = (MutableDocumentContext) row;
           mutableRow.setLine(tablerow.start.getLine());
           mutableRow.setCharPositionInLine(tablerow.start.getCharPositionInLine());
+          mutableRow.setStartOffset(ctx.start.getStartIndex());
+          mutableRow.setEndOffset(ctx.stop.getStopIndex());
         }
 
         for (int i = 0; i < tablerow.cell().size() && i < lastTableHeadings.size(); i++) {
@@ -450,7 +467,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
           }
         }
       }
-      updateParentContext(detailTable);
+      updateParentGraphContext(detailTable);
       if (contextConsumer != null) {
         contextConsumer.accept(detailTable);
       }
@@ -474,17 +491,25 @@ public class MarkdownEventSource implements MarkdownParserListener {
       final MutableDetail detail = contextFactory.createDetail();
       detail.setLine(ctx.start.getLine());
       detail.setCharPositionInLine(ctx.start.getCharPositionInLine());
+      detail.setStartOffset(ctx.start.getStartIndex());
+      detail.setEndOffset(ctx.stop.getStopIndex());
       for (int i = 0; i < lastColumnNo && i < lastTableHeadings.size(); i++) {
         final String value = lastRowValues.get(i);
         if (!value.isBlank()) {
           detail.addProperty(lastTableHeadings.get(i), value);
         }
       }
-      updateParentContext(detail);
+      updateParentGraphContext(detail);
       if (contextConsumer != null) {
         contextConsumer.accept(detail);
       }
     }
+  }
+
+  @Override
+  public void exitTextline(TextlineContext ctx) {
+    // TODO Auto-generated method stub
+
   }
 
   @Override
@@ -499,7 +524,8 @@ public class MarkdownEventSource implements MarkdownParserListener {
 
   }
 
-  void updateParentContext(final MutableContext context) {
+
+  void updateGraphContext(final MutableContext context) {
     // Remove previous contexts at same or lower level
     contexts.removeIf(c -> context.getLevel() <= c.getLevel());
     final MutableContext lastContext = contexts.peekLast();
@@ -513,47 +539,9 @@ public class MarkdownEventSource implements MarkdownParserListener {
     }
   }
 
-  void updateParentContext(final MutableGraphContext contextual) {
+  void updateParentGraphContext(final MutableGraphContext contextual) {
     final MutableContext lastContext = contexts.peekLast();
     contextual.setParent(lastContext);
-  }
-
-  private FileSpec infostringToFileSpec(InfostringContext infostring,
-      ImportspecContext importspec) {
-    final FileSpec spec = new FileSpec();
-    TerminalNode type = infostring.WORD();
-    if (type != null) {
-      spec.setType(type.getText());
-    }
-    if (importspec != null) {
-      final PathContext pathCtx = importspec.path();
-      if (pathCtx != null) {
-        final String path = pathCtx.getText();
-        spec.setPath(path);
-      }
-      final StartContext startCtx = importspec.start();
-      if (startCtx != null) {
-        final LocationContext startLocation = startCtx.location();
-        if (startLocation.LINENUMBER() != null) {
-          spec.setStartLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
-        }
-        if (startLocation.STRING() != null) {
-          spec.setStartSearch(startLocation.STRING().getText().replaceAll("\"", ""));
-        }
-      }
-      final EndContext endCtx = importspec.end();
-      if (endCtx != null) {
-        final LocationContext startLocation = endCtx.location();
-        if (startLocation.LINENUMBER() != null) {
-          spec.setEndLinenumber(Integer.parseInt(startLocation.LINENUMBER().getText()));
-        }
-        if (startLocation.STRING() != null) {
-          spec.setEndSearch(startLocation.STRING().getText().replaceAll("\"", ""));
-        }
-      }
-    }
-
-    return spec;
   }
 
   private String normalizeBlocks() {
@@ -564,21 +552,9 @@ public class MarkdownEventSource implements MarkdownParserListener {
     if (!lastBlocks.isEmpty()) {
       final String paragraphs = normalizeBlocks();
       final MutableDocumentation documentation = contextFactory.createDocumentation(paragraphs);
-      updateParentContext(documentation);
+      updateParentGraphContext(documentation);
       contextConsumer.accept(documentation);
     }
-  }
-
-  @Override
-  public void enterTextline(TextlineContext ctx) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void exitTextline(TextlineContext ctx) {
-    // TODO Auto-generated method stub
-    
   }
 
 }

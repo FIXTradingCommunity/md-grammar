@@ -23,10 +23,12 @@ import io.fixprotocol.md.event.MutableContext;
 public class ContextImpl implements MutableContext {
 
   private int charPositionInLine = UNKNOWN_POSITION;
+  private int endOffset = UNKNOWN_POSITION;
   private final List<String> keys = new ArrayList<>();
   private final int level;
   private int line = UNKNOWN_POSITION;
   private Context parent = null;
+  private int startOffset = UNKNOWN_POSITION;
 
   public ContextImpl() {
     this(EMPTY_CONTEXT, DEFAULT_LEVEL);
@@ -53,6 +55,11 @@ public class ContextImpl implements MutableContext {
   @Override
   public int getCharPositionInLine() {
     return charPositionInLine;
+  }
+
+  @Override
+  public int getEndOffset() {
+    return endOffset;
   }
 
   /**
@@ -109,8 +116,17 @@ public class ContextImpl implements MutableContext {
   }
 
   @Override
+  public int getStartOffset() {
+    return startOffset;
+  }
+
+  @Override
   public void setCharPositionInLine(int charPositionInLine) {
     this.charPositionInLine = charPositionInLine;
+  }
+
+  public void setEndOffset(int endOffset) {
+    this.endOffset = endOffset;
   }
 
   @Override
@@ -121,6 +137,10 @@ public class ContextImpl implements MutableContext {
   @Override
   public void setParent(Context parent) {
     this.parent = parent;
+  }
+
+  public void setStartOffset(int startOffset) {
+    this.startOffset = startOffset;
   }
 
   @Override

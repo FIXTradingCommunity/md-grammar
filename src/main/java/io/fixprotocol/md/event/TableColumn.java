@@ -18,8 +18,8 @@ package io.fixprotocol.md.event;
 /**
  * Mutable attributes of a table column
  *
- * Attributes are mutable because a function that composes a table needs to adjust spacing, etc.
- * for best presentation.
+ * Attributes are mutable because a function that composes a table needs to adjust spacing, etc. for
+ * best presentation.
  *
  * @author Don Mendelson
  *

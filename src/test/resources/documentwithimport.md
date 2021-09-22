@@ -11,3 +11,9 @@ publisher, date, and rights.
 
 ```xml import md2orchestra-proto.xml from "<fixr:metadata>" to "</fixr:metadata>"
 ```
+
+### Pedigree
+
+Most message elements in the schema support a complete history of
+creation, change and potentially deprecation with support of attribute group
+entityAttribGrp. Each historical event should be qualified by its extension pack (EP). In the past, they were also qualified by protocol version. However, each EP now produces FIX Latest; protocol versions will no longer change.

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import io.fixprotocol.md.util.FileImport.Imported;
 
 class FileImportTest {
 
@@ -21,7 +22,8 @@ class FileImportTest {
   void importWholeFile() throws IOException {
     fileSpec.setPath("md2orchestra-proto.md");
     Path baseDir = Path.of("src", "test", "resources");
-    String text = fileImport.importTextFromFile(baseDir , fileSpec);
+    Imported imported = fileImport.importFromFile(baseDir , fileSpec);
+    String text = FileImport.bufferToText(imported.getBuffer()); 
     assertTrue(text.startsWith("# Rules of Engagement"));
     assertTrue(text.contains("ThrottleInst"));
   }
@@ -32,7 +34,8 @@ class FileImportTest {
     fileSpec.setStartLinenumber(63);
     fileSpec.setEndLinenumber(72);   
     Path baseDir = Path.of("src", "test", "resources");
-    String text = fileImport.importTextFromFile(baseDir , fileSpec);
+    Imported imported = fileImport.importFromFile(baseDir , fileSpec);
+    String text = FileImport.bufferToText(imported.getBuffer()); 
     assertTrue(text.startsWith("### Codeset Sides"));
     assertTrue(text.contains("multileg instruments)"));
   }
@@ -42,7 +45,8 @@ class FileImportTest {
     fileSpec.setPath("md2orchestra-proto.md");
     fileSpec.setStartLinenumber(63);  
     Path baseDir = Path.of("src", "test", "resources");
-    String text = fileImport.importTextFromFile(baseDir , fileSpec);
+    Imported imported = fileImport.importFromFile(baseDir , fileSpec);
+    String text = FileImport.bufferToText(imported.getBuffer()); 
     assertTrue(text.startsWith("### Codeset Sides"));
     assertTrue(text.contains("ThrottleInst"));
   }
@@ -53,7 +57,8 @@ class FileImportTest {
     fileSpec.setStartSearch("### Codeset Sides");
     fileSpec.setEndSearch("multileg instruments)");   
     Path baseDir = Path.of("src", "test", "resources");
-    String text = fileImport.importTextFromFile(baseDir , fileSpec);
+    Imported imported = fileImport.importFromFile(baseDir , fileSpec);
+    String text = FileImport.bufferToText(imported.getBuffer()); 
     assertTrue(text.startsWith("### Codeset Sides"));
     assertTrue(text.contains("multileg instruments)"));
   }
@@ -63,7 +68,8 @@ class FileImportTest {
     fileSpec.setPath("md2orchestra-proto.md");
     fileSpec.setStartSearch("### Codeset Sides"); 
     Path baseDir = Path.of("src", "test", "resources");
-    String text = fileImport.importTextFromFile(baseDir , fileSpec);
+    Imported imported = fileImport.importFromFile(baseDir , fileSpec);
+    String text = FileImport.bufferToText(imported.getBuffer()); 
     assertTrue(text.startsWith("### Codeset Sides"));
     assertTrue(text.contains("ThrottleInst"));
   }

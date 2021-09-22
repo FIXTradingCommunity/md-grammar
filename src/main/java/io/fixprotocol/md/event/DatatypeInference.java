@@ -19,7 +19,7 @@ class DatatypeInference {
     final ParsePosition parsePosition = new ParsePosition(0);
     numberFormat.parse(t, parsePosition);
     final int index = parsePosition.getIndex();
-      return index != 0 && index >= t.length();
+    return index != 0 && index >= t.length();
   };
 
   private final String falseValue;

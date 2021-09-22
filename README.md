@@ -2,16 +2,16 @@
 
 Parser and writer for Markdown documents. 
 
-The markdown grammar follows [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). 
+The Markdown grammar follows [GitHub Flavored Markdown Spec](https://github.github.com/gfm/). 
 
-## Supported markdown features
+## Supported Markdown features
 
 ### Leaf blocks
 
-* ATX headings
+* ATX headings (prefixed by `#`)
 * Fenced code blocks -- a fenced code block has an optional infostring that tells the language of the code block. Originally, language was for programming language of the code block to support syntax-specific formatting. However, language has expanded to include various file types. See the list of [languages recognized by GitHub](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml).
 * Paragraphs
-* Tables
+* Tables (a Markdown extension)
 * Block quotes
 * Lists
 
@@ -20,7 +20,7 @@ The markdown grammar follows [GitHub Flavored Markdown Spec](https://github.gith
 The following markdown features are currently unsupported.
 
 * Thematic breaks
-* Setext headings
+* Setext headings (with underline)
 * HTML blocks
 * Link reference definitions
 
@@ -47,6 +47,27 @@ Syntax summary:
 * Search strings are delimited by double quote `"` while line numbers consist of digits without a delimiter.
 * The end search string matches the first instance of the string after the begin search is matched.
 * If no end line number or end search string is given, then the remainder of the file is included.
+
+## Merge2Markdown application
+
+This utility refreshes the contents of fenced code blocks that have an import spec (a Markdown extension). See syntax above.
+
+The intended benefit is to maintain living documents by assembling technical resources that are generated and validated elsewhere. For example, an XML snippet used as an example in a document can be validated externally by an XML processor. Furthermore, let's say that the XML schema was updated to version 2. By pulling in the most recent validated resource, the imported text will be up-to-date and accurate.
+
+The undesirable alternative is to copy and paste those resources into the main document. The trouble with that method is that the pasted text is frozen in amber, and can become outdated and downright inaccurate over time.
+
+Usage:
+```
+usage: Merge2Markdown [options] <input-file
+ -?,--help           display usage
+ -d,--import <arg>   directory for file import
+ -o,--output <arg>   path of output Markdown file (required)
+ ```
+
+ Command line example:
+ ```
+java -jar md-grammar-1.2.0-jar-with-dependencies -d importdir -o updated.md original.md
+ ```
 
 ## Prerequisites
 This project requires Java 11 or later. It should run on any platform for which a JVM is supported. Several open-source JDK implementations are available, including [Eclipse Temurin](https://adoptium.net/) and [Azul Zulu](https://www.azul.com/downloads/?package=jdk).

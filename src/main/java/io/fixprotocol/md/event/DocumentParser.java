@@ -28,11 +28,11 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import io.fixprotocol.md.antlr.MarkdownParserBaseListener;
 import io.fixprotocol.md.antlr.MarkdownEventSource;
 import io.fixprotocol.md.antlr.MarkdownLexer;
 import io.fixprotocol.md.antlr.MarkdownParser;
 import io.fixprotocol.md.antlr.MarkdownParser.DocumentContext;
+import io.fixprotocol.md.antlr.MarkdownParserBaseListener;
 
 public final class DocumentParser {
 
@@ -129,7 +129,7 @@ public final class DocumentParser {
     final MarkdownLexer lexer = new MarkdownLexer(CharStreams.fromStream(inputStream));
     lexer.removeErrorListeners();
     lexer.addErrorListener(errorListener);
-    final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));  
+    final MarkdownParser parser = new MarkdownParser(new CommonTokenStream(lexer));
     parser.removeErrorListeners();
     parser.addErrorListener(errorListener);
     final ParseTreeWalker walker = new ParseTreeWalker();

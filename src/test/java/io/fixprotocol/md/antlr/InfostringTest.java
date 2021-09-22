@@ -112,7 +112,7 @@ class InfostringTest {
     List<BlockContext> blocks = document.block();
     for (BlockContext block : blocks) {
       FencedcodeblockContext fencedCodeBlock = block.fencedcodeblock();
-      if (fencedCodeBlock != null) {
+      if (fencedCodeBlock != null) {     
         io.fixprotocol.md.antlr.MarkdownParser.InfostringContext ctx = fencedCodeBlock.infostring();
         assertEquals("xml", ctx.WORD().getText());
         ImportspecContext importspec = fencedCodeBlock.importspec();
@@ -125,7 +125,7 @@ class InfostringTest {
         EndContext endCtx = importspec.end();
         LocationContext endLocation = endCtx.location();
         assertEquals(199, Integer.parseInt(endLocation.LINENUMBER().getText()));
-        assertTrue(validator.isValid);
+        assertTrue(validator.isValid);     
         return;
       }
     }

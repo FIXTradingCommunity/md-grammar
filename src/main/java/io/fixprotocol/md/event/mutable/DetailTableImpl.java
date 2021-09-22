@@ -35,8 +35,10 @@ public class DetailTableImpl implements MutableDetailTable {
 
   private class TableRowImpl implements MutableDetailProperties, TableRow, MutableDocumentContext {
     private int charPositionInLine;
+    private int endOffset = UNKNOWN_POSITION;
     private int line;
     private final Map<String, String> properties = new LinkedHashMap<>();
+    private int startOffset = UNKNOWN_POSITION;
 
     @Override
     public void addIntProperty(String key, int value) {
@@ -62,6 +64,11 @@ public class DetailTableImpl implements MutableDetailTable {
     }
 
     @Override
+    public int getEndOffset() {
+      return endOffset;
+    }
+
+    @Override
     public Integer getIntProperty(String key) {
       final String property = getProperty(key);
       if (property != null) {
@@ -80,8 +87,6 @@ public class DetailTableImpl implements MutableDetailTable {
       return line != UNKNOWN_POSITION ? line : DetailTableImpl.this.getLine();
     }
 
-
-
     @Override
     public Collection<Entry<String, String>> getProperties() {
       return Collections.unmodifiableSet(properties.entrySet());
@@ -93,13 +98,30 @@ public class DetailTableImpl implements MutableDetailTable {
     }
 
     @Override
+    public int getStartOffset() {
+      return startOffset;
+    }
+
+
+
+    @Override
     public void setCharPositionInLine(int charPositionInLine) {
       this.charPositionInLine = charPositionInLine;
     }
 
     @Override
+    public void setEndOffset(int endOffset) {
+      this.endOffset = endOffset;
+    }
+
+    @Override
     public void setLine(int line) {
       this.line = line;
+    }
+
+    @Override
+    public void setStartOffset(int startOffset) {
+      this.startOffset = startOffset;
     }
 
     @Override
@@ -109,10 +131,11 @@ public class DetailTableImpl implements MutableDetailTable {
   }
 
   private int charPositionInLine;
+  private int endOffset = UNKNOWN_POSITION;
   private int line;
   private Context parent;
   private final List<TableRow> propertiesList = new ArrayList<>();
-
+  private int startOffset = UNKNOWN_POSITION;
 
   @Override
   public DetailProperties addProperties(DetailProperties detailProperties) {
@@ -127,13 +150,24 @@ public class DetailTableImpl implements MutableDetailTable {
   }
 
   @Override
+  public int getEndOffset() {
+    return endOffset;
+  }
+
+  @Override
   public int getLine() {
     return line;
   }
 
+
   @Override
   public Context getParent() {
     return parent;
+  }
+
+  @Override
+  public int getStartOffset() {
+    return startOffset;
   }
 
   @Override
@@ -173,6 +207,11 @@ public class DetailTableImpl implements MutableDetailTable {
   }
 
   @Override
+  public void setEndOffset(int endOffset) {
+    this.endOffset = endOffset;
+  }
+
+  @Override
   public void setLine(int line) {
     this.line = line;
   }
@@ -180,6 +219,11 @@ public class DetailTableImpl implements MutableDetailTable {
   @Override
   public void setParent(Context parent) {
     this.parent = parent;
+  }
+
+  @Override
+  public void setStartOffset(int startOffset) {
+    this.startOffset = startOffset;
   }
 
   private TableRow clone(DetailProperties detailProperties) {

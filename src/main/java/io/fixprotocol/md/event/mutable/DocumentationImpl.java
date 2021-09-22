@@ -21,9 +21,11 @@ public class DocumentationImpl implements MutableDocumentation {
 
   private int charPositionInLine = UNKNOWN_POSITION;
   private final String documentation;
+  private int endOffset = UNKNOWN_POSITION;
   private final String format;
   private int line = UNKNOWN_POSITION;
   private Context parent;
+  private int startOffset = UNKNOWN_POSITION;
 
   /**
    * Create markdown documentation, that is ordinary paragraphs
@@ -65,6 +67,11 @@ public class DocumentationImpl implements MutableDocumentation {
   }
 
   @Override
+  public int getEndOffset() {
+    return endOffset;
+  }
+
+  @Override
   public String getFormat() {
     return format;
   }
@@ -80,8 +87,18 @@ public class DocumentationImpl implements MutableDocumentation {
   }
 
   @Override
+  public int getStartOffset() {
+    return startOffset;
+  }
+
+  @Override
   public void setCharPositionInLine(int charPositionInLine) {
     this.charPositionInLine = charPositionInLine;
+  }
+
+  @Override
+  public void setEndOffset(int endOffset) {
+    this.endOffset = endOffset;
   }
 
   @Override
@@ -92,6 +109,11 @@ public class DocumentationImpl implements MutableDocumentation {
   @Override
   public void setParent(Context parent) {
     this.parent = parent;
+  }
+
+  @Override
+  public void setStartOffset(int startOffset) {
+    this.startOffset = startOffset;
   }
 
 }
