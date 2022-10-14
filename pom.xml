@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fixprotocol</groupId>
 	<artifactId>md-grammar</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Markdown parser</description>
 	<url>https://github.com/FIXTradingCommunity/md-grammar</url>
 	<prerequisites>
-		<maven>3.0.5</maven>
+		<maven>3.2.5</maven>
 	</prerequisites>
 
 	<organization>
@@ -51,11 +51,11 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<antlr.version>4.9.2</antlr.version>
+		<antlr.version>4.11.1</antlr.version>
 		<commons-cli.version>1.4</commons-cli.version>
-		<log4j.version>2.14.1</log4j.version>
+		<log4j.version>2.19.0</log4j.version>
 		<java.version>11</java.version>
-		<junit.version>5.8.0</junit.version>
+		<junit.version>5.9.1</junit.version>
 	</properties>
 
 	<dependencies>
@@ -109,7 +109,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.10.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -118,7 +118,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M4</version>
+				<version>3.0.0-M7</version>
 			</plugin>
 			<plugin>
 				<groupId>org.antlr</groupId>
@@ -175,12 +175,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.7.1</version>
+				<version>3.12.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>3.1.2</version>
+				<version>3.4.1</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -193,7 +193,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>3.0.1</version>
+						<version>3.2.1</version>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
@@ -206,7 +206,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>3.0.1</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -220,7 +220,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.2.0</version>
+						<version>3.4.1</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>

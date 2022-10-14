@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -165,6 +166,7 @@ class InfostringTest {
     fail("Fenced code block not found");
   }
 
+  @Disabled
   @ParameterizedTest
   @ValueSource(strings = {"src/test/resources/fileimport.md"})
   void testRig(String fileName) throws Exception {

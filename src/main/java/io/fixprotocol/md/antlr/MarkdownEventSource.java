@@ -22,7 +22,11 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -74,7 +78,28 @@ import io.fixprotocol.md.util.FileSpec;
 public class MarkdownEventSource implements MarkdownParserListener {
 
   private static final String CELL_NONTEXT = " |\t";
-  private static final String WHITESPACE_REGEX = "[ \t]";
+  // Support tokens with internal spaces surrounded by double quote. Otherwise split by whitespace.
+  private static final Pattern HEADING_TOKEN_REGEX = Pattern.compile("\"([^\"]*)\"|(\\S+)");
+  
+
+  public static String[] tokenizeHeading(final String headingLine, final int headingLevel) {
+    final List<String> matchList = new ArrayList<String>();
+    final Matcher matcher = HEADING_TOKEN_REGEX.matcher(headingLine.substring(headingLevel + 1));
+    while (matcher.find()) {
+      if (matcher.group(1) != null) {
+        // Add double-quoted string without the quotes
+        matchList.add(matcher.group(1));
+      } else if (matcher.group(2) != null) {
+        // Add single-quoted string without the quotes
+        matchList.add(matcher.group(2));
+      } else {
+        // Add unquoted word
+        matchList.add(matcher.group());
+      }
+    }
+    final String[] array = new String[matchList.size()];
+    return matchList.toArray(array);
+  }
 
   static String normalizeList(List<? extends ListlineContext> textlines) {
     return textlines.stream().map(p -> p.LISTLINE().getText()).collect(Collectors.joining("\n"));
@@ -369,7 +394,7 @@ public class MarkdownEventSource implements MarkdownParserListener {
     // Only a new heading changes the context
     // Heading level is length of first word formed with '#'
     final int headingLevel = headingLine.indexOf(" ");
-    final String[] headingWords = headingLine.substring(headingLevel + 1).split(WHITESPACE_REGEX);
+    final String[] headingWords = tokenizeHeading(headingLine, headingLevel);
     final MutableContext context = contextFactory.createContext(headingWords, headingLevel);
     context.setLine(ctx.start.getLine());
     context.setCharPositionInLine(ctx.start.getCharPositionInLine());

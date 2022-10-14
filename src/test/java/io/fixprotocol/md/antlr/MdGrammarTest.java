@@ -69,6 +69,7 @@ class MdGrammarTest {
     }
   }
 
+  @Disabled
   @ParameterizedTest
   @ValueSource(strings = {"src/test/resources/md2orchestra-proto.md"})
   void testRig(String fileName) throws Exception {

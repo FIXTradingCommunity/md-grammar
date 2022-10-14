@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.antlr.v4.gui.TestRig;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * Interactive tester for markdown grammar
@@ -35,6 +36,7 @@ import org.antlr.v4.gui.TestRig;
  * @author Don Mendelson
  *
  */
+@Disabled
 public class InteractiveTest implements Runnable {
 
   private static final String[] DEFAULT_ARGS = {"-gui", "-tree", "-tokens"};

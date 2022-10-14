@@ -15,11 +15,9 @@
 package io.fixprotocol.md.antlr;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 // black box testing for now
-@Disabled
 class MarkdownSourceTest {
 
   @Test
@@ -28,6 +26,14 @@ class MarkdownSourceTest {
     String trimmed = MarkdownEventSource.trimCell(text);
     assertEquals('C', trimmed.charAt(0));
     assertEquals(')', trimmed.charAt(trimmed.length()-1));
+  }
+  
+  @Test
+  void tokenizeHeading() {
+    String[] tokens = MarkdownEventSource.tokenizeHeading("### Actor \"Trading Adapter\"", 3);
+    assertEquals(2, tokens.length);
+    assertEquals("Actor", tokens[0]);
+    assertEquals("Trading Adapter", tokens[1]);
   }
 
 }

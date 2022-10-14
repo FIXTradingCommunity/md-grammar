@@ -143,3 +143,9 @@ Used to modify a cross order previously submitted using the New Order - Cross me
 | Designation                | 494       | optional                                                 |
 | ThrottleInst               | 1685      | optional                                                 |
 | StandardTrailer            | component | required                                                 |
+
+## Actors and Flows
+
+### Actor "Trading Adapter"
+
+This actor connects...
